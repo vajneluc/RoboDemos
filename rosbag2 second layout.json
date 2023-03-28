@@ -1,0 +1,844 @@
+{
+  "configById": {
+    "RawMessages!2ff06au": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/pose_topic"
+    },
+    "RawMessages!3sv4haa": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.sec"
+    },
+    "RawMessages!2f8dxwq": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.nsec"
+    },
+    "RawMessages!1fvffco": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.name"
+    },
+    "RawMessages!32hup21": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[:]"
+    },
+    "RawMessages!1i4lxrl": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.velocity[:]"
+    },
+    "RawMessages!37defsw": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.effort[:]"
+    },
+    "RawMessages!3gbxxrk": {
+      "diffEnabled": false,
+      "diffMethod": "previous message",
+      "diffTopicPath": "/joint_states",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[0]"
+    },
+    "RawMessages!dxou6e": {
+      "diffEnabled": false,
+      "diffMethod": "previous message",
+      "diffTopicPath": "/joint_states",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[1]"
+    },
+    "RawMessages!487asxw": {
+      "diffEnabled": false,
+      "diffMethod": "previous message",
+      "diffTopicPath": "/joint_states",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[2]"
+    },
+    "RawMessages!2e6hh8o": {
+      "diffEnabled": false,
+      "diffMethod": "previous message",
+      "diffTopicPath": "/joint_states",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[3]"
+    },
+    "RawMessages!39bxxol": {
+      "diffEnabled": false,
+      "diffMethod": "previous message",
+      "diffTopicPath": "/joint_states",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[4]"
+    },
+    "RawMessages!2ud8f7j": {
+      "diffEnabled": false,
+      "diffMethod": "previous message",
+      "diffTopicPath": "/joint_states",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[5]"
+    },
+    "RawMessages!46uwd18": {
+      "diffEnabled": false,
+      "diffMethod": "previous message",
+      "diffTopicPath": "/joint_states",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[6]"
+    },
+    "RawMessages!1mguejt": {
+      "diffEnabled": false,
+      "diffMethod": "previous message",
+      "diffTopicPath": "/joint_states",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[7]"
+    },
+    "RawMessages!5nwh6v": {
+      "diffEnabled": false,
+      "diffMethod": "previous message",
+      "diffTopicPath": "/joint_states",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.position[8]"
+    },
+    "Plot!367vv8o": {
+      "paths": [
+        {
+          "value": "/joint_states.position[0]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 1"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.position[1]",
+          "enabled": true,
+          "label": "panda joint 2"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.position[2]",
+          "enabled": true,
+          "label": "panda joint 3"
+        },
+        {
+          "value": "/joint_states.position[3]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 4"
+        },
+        {
+          "value": "/joint_states.position[4]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 5"
+        },
+        {
+          "value": "/joint_states.position[5]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 6"
+        },
+        {
+          "value": "/joint_states.position[6]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 7"
+        },
+        {
+          "value": "/joint_states.position[7]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda finger joint 1"
+        },
+        {
+          "value": "/joint_states.position[8]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda finger joint 2"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": false,
+      "legendDisplay": "left",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 167.33331298828125,
+      "foxglovePanelTitle": "panda joint 1",
+      "title": "Plot"
+    },
+    "RawMessages!1zhnc5o": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.sec"
+    },
+    "RawMessages!48uhby6": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.nsec"
+    },
+    "RawMessages!20at5zx": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.velocity[0]"
+    },
+    "RawMessages!24r36ne": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.velocity[1]"
+    },
+    "RawMessages!akqn72": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.velocity[2]"
+    },
+    "RawMessages!2b7z1gy": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.velocity[3]"
+    },
+    "RawMessages!10v6188": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.velocity[4]"
+    },
+    "RawMessages!1tn4vb9": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.velocity[5]"
+    },
+    "RawMessages!1odowhs": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.velocity[6]"
+    },
+    "Plot!3k02v90": {
+      "paths": [
+        {
+          "value": "/joint_states.velocity[0]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 1"
+        },
+        {
+          "value": "/joint_states.velocity[1]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 2"
+        },
+        {
+          "value": "/joint_states.velocity[2]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 3"
+        },
+        {
+          "value": "/joint_states.velocity[3]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 4"
+        },
+        {
+          "value": "/joint_states.velocity[4]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 5"
+        },
+        {
+          "value": "/joint_states.velocity[5]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 6"
+        },
+        {
+          "value": "/joint_states.velocity[6]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 7"
+        },
+        {
+          "value": "/joint_states.velocity[7]",
+          "enabled": false,
+          "timestampMethod": "receiveTime",
+          "label": "panda finger joint 1"
+        },
+        {
+          "value": "/joint_states.velocity[8]",
+          "enabled": false,
+          "timestampMethod": "receiveTime",
+          "label": "panda finger joint 2"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": false,
+      "legendDisplay": "left",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 160.66668701171875,
+      "foxglovePanelTitle": "Plot",
+      "title": "Plot"
+    },
+    "RawMessages!1e4g9z3": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.sec"
+    },
+    "RawMessages!19ihuhr": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.nsec"
+    },
+    "RawMessages!3a4ta9i": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.effort[0]"
+    },
+    "RawMessages!2qpu0eq": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.effort[1]"
+    },
+    "RawMessages!34erytp": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.effort[2]"
+    },
+    "RawMessages!bw4d53": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.effort[3]"
+    },
+    "RawMessages!ej2vw0": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.effort[4]"
+    },
+    "RawMessages!yg0ts7": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.effort[5]"
+    },
+    "Plot!1el5jeo": {
+      "paths": [
+        {
+          "value": "/joint_states.effort[0]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 1"
+        },
+        {
+          "value": "/joint_states.effort[1]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 2"
+        },
+        {
+          "value": "/joint_states.effort[2]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 3"
+        },
+        {
+          "value": "/joint_states.effort[3]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 4"
+        },
+        {
+          "value": "/joint_states.effort[4]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 5"
+        },
+        {
+          "value": "/joint_states.effort[5]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 6"
+        },
+        {
+          "value": "/joint_states.effort[6]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "panda joint 7"
+        },
+        {
+          "value": "/joint_states.effort[7]",
+          "enabled": false,
+          "timestampMethod": "receiveTime",
+          "label": "panda finger joint 1"
+        },
+        {
+          "value": "/joint_states.effort[8]",
+          "enabled": false,
+          "timestampMethod": "receiveTime",
+          "label": "panda finger joint 2"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": false,
+      "legendDisplay": "left",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 171.33331298828125,
+      "foxglovePanelTitle": "Plot",
+      "title": "Plot"
+    },
+    "RawMessages!3k6esjh": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.sec"
+    },
+    "RawMessages!3px6knx": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.nsec"
+    },
+    "RawMessages!2ximfps": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/pose_topic.position.x"
+    },
+    "RawMessages!1jbbvuz": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/pose_topic.position.y"
+    },
+    "RawMessages!qxsmmm": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/pose_topic.position.z"
+    },
+    "Plot!451e7cb": {
+      "paths": [
+        {
+          "value": "/pose_topic.position.x",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "position X"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/pose_topic.position.y",
+          "enabled": true,
+          "label": "position Y"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/pose_topic.position.z",
+          "enabled": true,
+          "label": "position Z"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "left",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 112,
+      "foxglovePanelTitle": "Position topics"
+    },
+    "RawMessages!1k4nwk7": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.sec"
+    },
+    "RawMessages!3kutrjp": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.nsec"
+    },
+    "RawMessages!9ugu8g": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/pose_topic.orientation.x"
+    },
+    "RawMessages!11iiw05": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/pose_topic.orientation.y"
+    },
+    "RawMessages!14mwrd6": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/pose_topic.position.z"
+    },
+    "RawMessages!364wwjg": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/pose_topic.orientation.w"
+    },
+    "Plot!3rb9zxb": {
+      "paths": [
+        {
+          "value": "/pose_topic.orientation.x",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "orientation X"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/pose_topic.orientation.y",
+          "enabled": true,
+          "label": "orientation Y"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/pose_topic.orientation.z",
+          "enabled": true,
+          "label": "orientation Z"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/pose_topic.orientation.w",
+          "enabled": true,
+          "label": "orientation Z"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "left",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 134.6666259765625,
+      "foxglovePanelTitle": "Orientation topics"
+    },
+    "RawMessages!4407i9s": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.sec"
+    },
+    "RawMessages!39gaisy": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/joint_states.header.stamp.nsec"
+    },
+    "Tab!86eahp": {
+      "activeTabIdx": 5,
+      "tabs": [
+        {
+          "title": "OVERVIEW",
+          "layout": {
+            "first": {
+              "first": "RawMessages!2ff06au",
+              "second": {
+                "first": "RawMessages!3sv4haa",
+                "second": "RawMessages!2f8dxwq",
+                "direction": "column"
+              },
+              "direction": "row"
+            },
+            "second": {
+              "first": {
+                "first": "RawMessages!1fvffco",
+                "second": "RawMessages!32hup21",
+                "direction": "row"
+              },
+              "second": {
+                "first": "RawMessages!1i4lxrl",
+                "second": "RawMessages!37defsw",
+                "direction": "row"
+              },
+              "direction": "row"
+            },
+            "direction": "column"
+          }
+        },
+        {
+          "title": "POSITION",
+          "layout": {
+            "first": {
+              "first": {
+                "first": {
+                  "first": "RawMessages!3gbxxrk",
+                  "second": "RawMessages!dxou6e",
+                  "direction": "column",
+                  "splitPercentage": 49.132947976878626
+                },
+                "second": {
+                  "first": "RawMessages!487asxw",
+                  "second": "RawMessages!2e6hh8o",
+                  "direction": "column",
+                  "splitPercentage": 49.999999999999964
+                },
+                "direction": "column",
+                "splitPercentage": 50.14749262536873
+              },
+              "second": {
+                "first": {
+                  "first": "RawMessages!39bxxol",
+                  "second": "RawMessages!2ud8f7j",
+                  "direction": "column",
+                  "splitPercentage": 48.82352941176474
+                },
+                "second": {
+                  "first": "RawMessages!46uwd18",
+                  "second": {
+                    "first": "RawMessages!1mguejt",
+                    "second": "RawMessages!5nwh6v",
+                    "direction": "column",
+                    "splitPercentage": 50.09822581973864
+                  },
+                  "direction": "column",
+                  "splitPercentage": 33.637546215028834
+                },
+                "direction": "column",
+                "splitPercentage": 39.93735126266054
+              },
+              "direction": "column",
+              "splitPercentage": 44.33304154059542
+            },
+            "second": {
+              "first": "Plot!367vv8o",
+              "second": {
+                "first": "RawMessages!1zhnc5o",
+                "second": "RawMessages!48uhby6",
+                "direction": "row"
+              },
+              "direction": "column",
+              "splitPercentage": 88.92763494868697
+            },
+            "direction": "row",
+            "splitPercentage": 29.676673440159227
+          }
+        },
+        {
+          "title": "VELOCITY",
+          "layout": {
+            "first": {
+              "first": {
+                "first": {
+                  "first": "RawMessages!20at5zx",
+                  "second": "RawMessages!24r36ne",
+                  "direction": "column"
+                },
+                "second": {
+                  "first": "RawMessages!akqn72",
+                  "second": "RawMessages!2b7z1gy",
+                  "direction": "column"
+                },
+                "direction": "column"
+              },
+              "second": {
+                "first": {
+                  "first": "RawMessages!10v6188",
+                  "second": "RawMessages!1tn4vb9",
+                  "direction": "column",
+                  "splitPercentage": 48.776223759864585
+                },
+                "second": "RawMessages!1odowhs",
+                "direction": "column",
+                "splitPercentage": 67.98336367008814
+              },
+              "direction": "column",
+              "splitPercentage": 58.06451458414267
+            },
+            "second": {
+              "first": "Plot!3k02v90",
+              "second": {
+                "first": "RawMessages!1e4g9z3",
+                "second": "RawMessages!19ihuhr",
+                "direction": "row"
+              },
+              "direction": "column",
+              "splitPercentage": 86.57366814122173
+            },
+            "direction": "row",
+            "splitPercentage": 33.833717202872485
+          }
+        },
+        {
+          "title": "EFFORT",
+          "layout": {
+            "first": {
+              "first": {
+                "first": "RawMessages!3a4ta9i",
+                "second": {
+                  "first": "RawMessages!2qpu0eq",
+                  "second": "RawMessages!34erytp",
+                  "direction": "column"
+                },
+                "direction": "column",
+                "splitPercentage": 32.43243156952113
+              },
+              "second": {
+                "first": {
+                  "first": "RawMessages!bw4d53",
+                  "second": "RawMessages!ej2vw0",
+                  "direction": "column",
+                  "splitPercentage": 47.896877082685016
+                },
+                "second": "RawMessages!yg0ts7",
+                "direction": "column",
+                "splitPercentage": 64.25457278757477
+              },
+              "direction": "column",
+              "splitPercentage": 49.17175108927397
+            },
+            "second": {
+              "first": "Plot!1el5jeo",
+              "second": {
+                "first": "RawMessages!3k6esjh",
+                "second": "RawMessages!3px6knx",
+                "direction": "row"
+              },
+              "direction": "column",
+              "splitPercentage": 81.86573452629123
+            },
+            "direction": "row",
+            "splitPercentage": 29.745957502871118
+          }
+        },
+        {
+          "title": "POS_TOPIC",
+          "layout": {
+            "first": {
+              "first": "RawMessages!2ximfps",
+              "second": {
+                "first": "RawMessages!1jbbvuz",
+                "second": "RawMessages!qxsmmm",
+                "direction": "column"
+              },
+              "direction": "column",
+              "splitPercentage": 31.909327834528856
+            },
+            "second": {
+              "first": "Plot!451e7cb",
+              "second": {
+                "first": "RawMessages!1k4nwk7",
+                "second": "RawMessages!3kutrjp",
+                "direction": "row"
+              },
+              "direction": "column",
+              "splitPercentage": 65.91107060902681
+            },
+            "direction": "row",
+            "splitPercentage": 33.62586501473682
+          }
+        },
+        {
+          "title": "ORI_TOPIC",
+          "layout": {
+            "first": {
+              "first": {
+                "first": "RawMessages!9ugu8g",
+                "second": "RawMessages!11iiw05",
+                "direction": "column"
+              },
+              "second": {
+                "first": "RawMessages!14mwrd6",
+                "second": "RawMessages!364wwjg",
+                "direction": "column"
+              },
+              "direction": "column"
+            },
+            "second": {
+              "first": "Plot!3rb9zxb",
+              "second": {
+                "first": "RawMessages!4407i9s",
+                "second": "RawMessages!39gaisy",
+                "direction": "row"
+              },
+              "direction": "column",
+              "splitPercentage": 75.06538597139165
+            },
+            "direction": "row",
+            "splitPercentage": 34.18013751643192
+          }
+        }
+      ]
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {
+    "fac09b7b-199d-42ee-af04-cfea0c410554": {
+      "sourceCode": "// The ./types module provides helper types for your Input events and messages.\nimport { Input, Message } from \"./types\";\n\n// Your script can output well-known message types, any of your custom message types, or\n// complete custom message types.\n//\n// Use `Message` to access your data source types or well-known types:\n// type Twist = Message<\"geometry_msgs/Twist\">;\n//\n// Conventionally, it's common to make a _type alias_ for your script's output type\n// and use that type name as the return type for your script function.\n// Here we've called the type `Output` but you can pick any type name.\ntype Output = {\n  hello: string;\n};\n\n// These are the topics your script \"subscribes\" to. Studio will invoke your script function\n// when any message is received on one of these topics.\nexport const inputs = [\"/input/topic\"];\n\n// Any output your script produces is \"published\" to this topic. Published messages are only visible within Studio, not to your original data source.\nexport const output = \"/studio_script/output_topic\";\n\n// This function is called with messages from your input topics.\n// The first argument is an event with the topic, receive time, and message.\n// Use the `Input<...>` helper to get the correct event type for your input topic messages.\nexport default function script(event: Input<\"/input/topic\">): Output {\n  return {\n    hello: \"world!\",\n  };\n};",
+      "name": "fac09b7b"
+    }
+  },
+  "playbackConfig": {
+    "speed": 0.2
+  },
+  "layout": "Tab!86eahp"
+}
