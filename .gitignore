@@ -1,5 +1,5 @@
-target/
 .vscode/
 build/
 install/
 log/
+requirements.txt
