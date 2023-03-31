@@ -1,0 +1,331 @@
+{
+  "configById": {
+    "RawMessages!27apet5": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/tf.transforms[0].transform.rotation"
+    },
+    "RawMessages!2cwbeks": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/tf.transforms[1].transform.rotation"
+    },
+    "RawMessages!bhpuet": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/tf.transforms[2].transform.rotation"
+    },
+    "Plot!3y646lk": {
+      "paths": [
+        {
+          "value": "/tf.transforms[0].transform.rotation.x",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "X"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[0].transform.rotation.y",
+          "enabled": true,
+          "label": "Y"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[0].transform.rotation.z",
+          "enabled": true,
+          "label": "Z"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[0].transform.rotation.w",
+          "enabled": true,
+          "label": "W"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240,
+      "foxglovePanelTitle": "Transform rotation 0"
+    },
+    "Plot!3z3z718": {
+      "paths": [
+        {
+          "value": "/tf.transforms[1].transform.rotation.x",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "X"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[1].transform.rotation.y",
+          "enabled": true,
+          "label": "Y"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[1].transform.rotation.z",
+          "enabled": true,
+          "label": "Z"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[1].transform.rotation.w",
+          "enabled": true,
+          "label": "W"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240,
+      "foxglovePanelTitle": "Plot"
+    },
+    "Plot!y86dj0": {
+      "paths": [
+        {
+          "value": "/tf.transforms[2].transform.rotation.x",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "X"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[2].transform.rotation.y",
+          "enabled": true,
+          "label": "Y"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[2].transform.rotation.z",
+          "enabled": true,
+          "label": "Z"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[2].transform.rotation.w",
+          "enabled": true,
+          "label": "W"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240,
+      "foxglovePanelTitle": "Plot"
+    },
+    "RawMessages!cks0ak": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/tf.transforms[0].transform.translation"
+    },
+    "RawMessages!3drmyci": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/tf.transforms[1].transform.translation"
+    },
+    "RawMessages!15ivr6n": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/tf.transforms[2].transform.translation"
+    },
+    "Plot!2e84bbu": {
+      "paths": [
+        {
+          "value": "",
+          "enabled": true,
+          "timestampMethod": "receiveTime"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240,
+      "foxglovePanelTitle": "Plot"
+    },
+    "Plot!4jw37v4": {
+      "paths": [
+        {
+          "value": "",
+          "enabled": true,
+          "timestampMethod": "receiveTime"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240,
+      "foxglovePanelTitle": "Plot"
+    },
+    "Plot!4asrc9r": {
+      "paths": [
+        {
+          "value": "",
+          "enabled": true,
+          "timestampMethod": "receiveTime"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240,
+      "foxglovePanelTitle": "Plot"
+    },
+    "Tab!3cxe6vk": {
+      "activeTabIdx": 2,
+      "tabs": [
+        {
+          "title": "tranform rotation",
+          "layout": {
+            "first": {
+              "first": "RawMessages!27apet5",
+              "second": {
+                "first": "RawMessages!2cwbeks",
+                "second": "RawMessages!bhpuet",
+                "direction": "column"
+              },
+              "direction": "column",
+              "splitPercentage": 30.601568497048167
+            },
+            "second": {
+              "first": "Plot!3y646lk",
+              "second": {
+                "first": "Plot!3z3z718",
+                "second": "Plot!y86dj0",
+                "direction": "column",
+                "splitPercentage": 52.1263650172899
+              },
+              "direction": "column",
+              "splitPercentage": 30.47079256330009
+            },
+            "direction": "row",
+            "splitPercentage": 29.39953718931168
+          }
+        },
+        {
+          "title": "2",
+          "layout": {
+            "first": {
+              "first": "RawMessages!cks0ak",
+              "second": {
+                "first": "RawMessages!3drmyci",
+                "second": "RawMessages!15ivr6n",
+                "direction": "column"
+              },
+              "direction": "column",
+              "splitPercentage": 29.032257292071336
+            },
+            "second": {
+              "first": "Plot!2e84bbu",
+              "second": {
+                "first": "Plot!4jw37v4",
+                "second": "Plot!4asrc9r",
+                "direction": "column"
+              },
+              "direction": "column",
+              "splitPercentage": 32.43243156952113
+            },
+            "direction": "row"
+          }
+        },
+        {
+          "title": "3",
+          "layout": "3D!48pjego"
+        }
+      ]
+    },
+    "3D!48pjego": {
+      "cameraState": {
+        "perspective": true,
+        "distance": 6.8112325257619775,
+        "phi": 59.99999999999988,
+        "thetaOffset": 44.99999999999994,
+        "targetOffset": [
+          0.7896845229487489,
+          -0.7168768273298233,
+          -3.583332605239817e-17
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {},
+      "transforms": {},
+      "topics": {},
+      "layers": {
+        "8b60be53-7d9d-4cb4-a169-6d1433d60a10": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "URDF",
+          "instanceId": "8b60be53-7d9d-4cb4-a169-6d1433d60a10",
+          "layerId": "foxglove.Urdf",
+          "url": "http://localhost:3333/r2d2.urdf.xml",
+          "order": 1
+        }
+      },
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      }
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "layout": "Tab!3cxe6vk"
+}

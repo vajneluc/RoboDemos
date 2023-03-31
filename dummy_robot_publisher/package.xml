@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>panda_fk</name>
+  <name>dummy_robot_publisher</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="julius@todo.todo">julius</maintainer>
   <license>TODO: License declaration</license>
-  
+  <depend>robot_state_publisher</depend>
   <depend>rclpy</depend>
-  
-  <exec_depend>robot_state_publisher</exec_depend>
-
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msg</depend>
+  <depend>geometry_msg</depend>
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
