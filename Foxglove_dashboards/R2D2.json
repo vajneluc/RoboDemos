@@ -56,7 +56,8 @@
       "isSynced": true,
       "xAxisVal": "timestamp",
       "sidebarDimension": 240,
-      "foxglovePanelTitle": "Transform rotation 0"
+      "foxglovePanelTitle": "Rotation 0",
+      "title": "Plot"
     },
     "Plot!3z3z718": {
       "paths": [
@@ -93,7 +94,8 @@
       "isSynced": true,
       "xAxisVal": "timestamp",
       "sidebarDimension": 240,
-      "foxglovePanelTitle": "Plot"
+      "foxglovePanelTitle": "Rotation 1",
+      "title": "Plot"
     },
     "Plot!y86dj0": {
       "paths": [
@@ -130,7 +132,8 @@
       "isSynced": true,
       "xAxisVal": "timestamp",
       "sidebarDimension": 240,
-      "foxglovePanelTitle": "Plot"
+      "foxglovePanelTitle": "Rotation 2",
+      "title": "Plot"
     },
     "RawMessages!cks0ak": {
       "diffEnabled": false,
@@ -156,9 +159,22 @@
     "Plot!2e84bbu": {
       "paths": [
         {
-          "value": "",
+          "value": "/tf.transforms[0].transform.translation.x",
           "enabled": true,
-          "timestampMethod": "receiveTime"
+          "timestampMethod": "receiveTime",
+          "label": "X"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[0].transform.translation.y",
+          "enabled": true,
+          "label": "Y"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[0].transform.translation.x",
+          "enabled": true,
+          "label": "Z"
         }
       ],
       "showXAxisLabels": true,
@@ -169,14 +185,27 @@
       "isSynced": true,
       "xAxisVal": "timestamp",
       "sidebarDimension": 240,
-      "foxglovePanelTitle": "Plot"
+      "foxglovePanelTitle": "Translation 0"
     },
     "Plot!4jw37v4": {
       "paths": [
         {
-          "value": "",
+          "value": "/tf.transforms[1].transform.translation.x",
           "enabled": true,
-          "timestampMethod": "receiveTime"
+          "timestampMethod": "receiveTime",
+          "label": "X"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[1].transform.translation.y",
+          "enabled": true,
+          "label": "Y"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/tf.transforms[1].transform.translation.z",
+          "enabled": true,
+          "label": "Z"
         }
       ],
       "showXAxisLabels": true,
@@ -187,7 +216,8 @@
       "isSynced": true,
       "xAxisVal": "timestamp",
       "sidebarDimension": 240,
-      "foxglovePanelTitle": "Plot"
+      "foxglovePanelTitle": "Translation 1",
+      "title": "Plot"
     },
     "Plot!4asrc9r": {
       "paths": [
@@ -205,20 +235,133 @@
       "isSynced": true,
       "xAxisVal": "timestamp",
       "sidebarDimension": 240,
-      "foxglovePanelTitle": "Plot"
+      "foxglovePanelTitle": "Translation 2"
+    },
+    "3D!48pjego": {
+      "cameraState": {
+        "perspective": true,
+        "distance": 8.362406704380865,
+        "phi": 59.99999999999885,
+        "thetaOffset": 44.999999999999986,
+        "targetOffset": [
+          0.2081419956208857,
+          -0.631263962345585,
+          -1.5445234447832852e-16
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {
+        "backgroundColor": "#000000",
+        "syncCamera": false,
+        "enableStats": false,
+        "labelScaleFactor": 1,
+        "transforms": {
+          "showLabel": false
+        }
+      },
+      "transforms": {
+        "frame:leg1": {
+          "visible": true
+        },
+        "frame:leg2": {
+          "visible": true
+        },
+        "frame:head": {
+          "visible": true
+        },
+        "frame:axis": {
+          "visible": true
+        },
+        "frame:odom": {
+          "visible": true
+        },
+        "frame:rod": {
+          "visible": true
+        },
+        "frame:body": {
+          "visible": true
+        },
+        "frame:box": {
+          "visible": true
+        }
+      },
+      "topics": {
+        "/move_base_simple/goal": {
+          "axisScale": 0.19999999999999996
+        }
+      },
+      "layers": {
+        "d6f17d7d-6373-4b6f-8ee0-b0998ca1c2ef": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "URDF",
+          "instanceId": "d6f17d7d-6373-4b6f-8ee0-b0998ca1c2ef",
+          "layerId": "foxglove.Urdf",
+          "url": "C:\\Users\\Julius\\Desktop\\School\\Programming\\r2d2.urdf.xml",
+          "order": 1
+        },
+        "5d56e4b8-9eb5-4361-a775-7373c2d3e82e": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "5d56e4b8-9eb5-4361-a775-7373c2d3e82e",
+          "layerId": "foxglove.Grid",
+          "size": 5,
+          "divisions": 20,
+          "lineWidth": 2,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "order": 2
+        }
+      },
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "followTf": "odom",
+      "foxglovePanelTitle": "R2D2"
     },
     "Tab!3cxe6vk": {
       "activeTabIdx": 2,
       "tabs": [
         {
-          "title": "tranform rotation",
+          "title": "rotations",
           "layout": {
             "first": {
               "first": "RawMessages!27apet5",
               "second": {
                 "first": "RawMessages!2cwbeks",
                 "second": "RawMessages!bhpuet",
-                "direction": "column"
+                "direction": "column",
+                "splitPercentage": 52.098342315930225
               },
               "direction": "column",
               "splitPercentage": 30.601568497048167
@@ -239,17 +382,18 @@
           }
         },
         {
-          "title": "2",
+          "title": "translations",
           "layout": {
             "first": {
               "first": "RawMessages!cks0ak",
               "second": {
                 "first": "RawMessages!3drmyci",
                 "second": "RawMessages!15ivr6n",
-                "direction": "column"
+                "direction": "column",
+                "splitPercentage": 50.13333333333333
               },
               "direction": "column",
-              "splitPercentage": 29.032257292071336
+              "splitPercentage": 32.24932249322493
             },
             "second": {
               "first": "Plot!2e84bbu",
@@ -265,61 +409,10 @@
           }
         },
         {
-          "title": "3",
+          "title": "3D Model",
           "layout": "3D!48pjego"
         }
       ]
-    },
-    "3D!48pjego": {
-      "cameraState": {
-        "perspective": true,
-        "distance": 6.8112325257619775,
-        "phi": 59.99999999999988,
-        "thetaOffset": 44.99999999999994,
-        "targetOffset": [
-          0.7896845229487489,
-          -0.7168768273298233,
-          -3.583332605239817e-17
-        ],
-        "target": [
-          0,
-          0,
-          0
-        ],
-        "targetOrientation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "fovy": 45,
-        "near": 0.5,
-        "far": 5000
-      },
-      "followMode": "follow-pose",
-      "scene": {},
-      "transforms": {},
-      "topics": {},
-      "layers": {
-        "8b60be53-7d9d-4cb4-a169-6d1433d60a10": {
-          "visible": true,
-          "frameLocked": true,
-          "label": "URDF",
-          "instanceId": "8b60be53-7d9d-4cb4-a169-6d1433d60a10",
-          "layerId": "foxglove.Urdf",
-          "url": "http://localhost:3333/r2d2.urdf.xml",
-          "order": 1
-        }
-      },
-      "publish": {
-        "type": "point",
-        "poseTopic": "/move_base_simple/goal",
-        "pointTopic": "/clicked_point",
-        "poseEstimateTopic": "/initialpose",
-        "poseEstimateXDeviation": 0.5,
-        "poseEstimateYDeviation": 0.5,
-        "poseEstimateThetaDeviation": 0.26179939
-      }
     }
   },
   "globalVariables": {},
