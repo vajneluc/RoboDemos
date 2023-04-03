@@ -11,3 +11,6 @@ rviz2 -d ~/ros2_ws/install/urdf_tutorial_r2d2/share/urdf_tutorial_r2d2/r2d2.rviz
 # ros2 pkg create
 cd /home/julius/ros2_ws/src/
 ros2 pkg create --build-type ament_python
+
+# pipeline filter
+ros2 topic echo /tf | ./pipefilter.py transforms[0].transform.rotation.w
