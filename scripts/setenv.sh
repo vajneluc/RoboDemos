@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source /opt/ros/humble/setup.bash
+source /opt/ros/foxy/setup.bash
 
-source /home/julius/ros2_ws/install/setup.sh
+source /home/ros/ros2_ws/install/setup.sh
 
 
