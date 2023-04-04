@@ -1,5 +1,6 @@
 #!/bin/bash
 
+mkdir -p ~/libs
 cd ~/libs
 sudo apt install -y libpoco-dev libeigen3-dev
 git clone https://github.com/frankaemika/libfranka.git --recursive
