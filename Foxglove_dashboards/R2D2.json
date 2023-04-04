@@ -185,7 +185,8 @@
       "isSynced": true,
       "xAxisVal": "timestamp",
       "sidebarDimension": 240,
-      "foxglovePanelTitle": "Translation 0"
+      "foxglovePanelTitle": "Translation 0",
+      "title": "Plot"
     },
     "Plot!4jw37v4": {
       "paths": [
@@ -235,18 +236,19 @@
       "isSynced": true,
       "xAxisVal": "timestamp",
       "sidebarDimension": 240,
-      "foxglovePanelTitle": "Translation 2"
+      "foxglovePanelTitle": "Translation 2",
+      "title": "Plot"
     },
     "3D!48pjego": {
       "cameraState": {
         "perspective": true,
-        "distance": 8.362406704380865,
-        "phi": 59.99999999999885,
-        "thetaOffset": 44.999999999999986,
+        "distance": 5.839780486773244,
+        "phi": 59.99999999999865,
+        "thetaOffset": 45,
         "targetOffset": [
-          0.2081419956208857,
-          -0.631263962345585,
-          -1.5445234447832852e-16
+          0.30821728819033595,
+          -0.590383636636105,
+          -1.4836488120971578e-16
         ],
         "target": [
           0,
@@ -305,15 +307,6 @@
         }
       },
       "layers": {
-        "d6f17d7d-6373-4b6f-8ee0-b0998ca1c2ef": {
-          "visible": true,
-          "frameLocked": true,
-          "label": "URDF",
-          "instanceId": "d6f17d7d-6373-4b6f-8ee0-b0998ca1c2ef",
-          "layerId": "foxglove.Urdf",
-          "url": "C:\\Users\\Julius\\Desktop\\School\\Programming\\r2d2.urdf.xml",
-          "order": 1
-        },
         "5d56e4b8-9eb5-4361-a775-7373c2d3e82e": {
           "visible": true,
           "frameLocked": true,
@@ -335,6 +328,15 @@
             0
           ],
           "order": 2
+        },
+        "bf464120-d575-4c09-a6ee-636e9eb11554": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "URDF",
+          "instanceId": "bf464120-d575-4c09-a6ee-636e9eb11554",
+          "layerId": "foxglove.Urdf",
+          "url": "file:///home/ros/devel/RoboDemos/urdf_tutorial_r2d2/urdf/r2d2.urdf.xml",
+          "order": 3
         }
       },
       "publish": {

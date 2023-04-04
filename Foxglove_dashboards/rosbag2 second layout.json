@@ -578,7 +578,8 @@
       "isSynced": true,
       "xAxisVal": "timestamp",
       "sidebarDimension": 134.6666259765625,
-      "foxglovePanelTitle": "Orientation topics"
+      "foxglovePanelTitle": "Orientation topics",
+      "title": "Plot"
     },
     "RawMessages!4407i9s": {
       "diffEnabled": false,
