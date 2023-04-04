@@ -1,7 +1,11 @@
 #!/bin/bash
 
-source /opt/ros/foxy/setup.bash
+export ROS_DISTRO=humble
 
-source /home/ros/ros2_ws/install/setup.sh
+export WORKSPACE=~/ros2_ws
+
+source /opt/ros/$ROS_DISTRO/setup.bash
+
+source $WORKSPACE/install/setup.sh
 
 
