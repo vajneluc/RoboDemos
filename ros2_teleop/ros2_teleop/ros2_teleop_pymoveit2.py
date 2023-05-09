@@ -8,7 +8,7 @@ from rclpy.qos import (
 	QoSReliabilityPolicy,
 )
 from rclpy.node import Node
-
+from rclpy.callback_groups import ReentrantCallbackGroup
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import TwistStamped
 
@@ -24,59 +24,17 @@ class ServoClientNode(Node):
 
 	def __init__(self):
 		super().__init__('teleop_twist_keyboard')
-		self.declare_parameter("servo_control", rclpy.Parameter.Type.STRING)
-		param_servo_control = self.get_parameter("servo_control").value
-		if param_servo_control in ["sync","async", "none"]:
-			self.servo_control_mode = param_servo_control
-		else:
-			print("Invalid parameter value (servo_control): must be one of: 'sync', 'async', 'none'")
-			exit()
-		print("parameter used:",param_servo_control)
+		# Create callback group that allows execution of callbacks in parallel without restrictions
+		callback_group = ReentrantCallbackGroup()
 
-		self.__is_enabled = False
+		# Create MoveIt 2 Servo interface
+		self.moveit2_servo = MoveIt2Servo(
+			node=self,
+			frame_id=panda.base_link_name(),
+			callback_group=callback_group,
+		)
 
-		if self.servo_control_mode == "none":
-			self.__start_service = None
-			self.__stop_service = None
-		elif self.servo_control_mode == "sync":
-			pass
-		else:
-			self.__start_service = self.create_client(Trigger, '/servo_node/start_servo')
-			self.__stop_service = self.create_client(Trigger, '/servo_node/stop_servo')
-			while not self.__start_service.wait_for_service(timeout_sec=1.0):
-				self.get_logger().info('start_service not available, waiting again...')
-			while not self.__stop_service.wait_for_service(timeout_sec=1.0):
-				self.get_logger().info('stop_service not available, waiting again...')
-
-		self.req = Trigger.Request()
-		
-
-	def request_servo_start(self):
-		result = self.__start_service.call(self.req)
-		if not result.success:
-			self._node.get_logger().error(
-				f"MoveIt Servo could not be enabled. ({result.message})"
-			)
-		self.__is_enabled = result.success
-
-	def request_servo_stop(self):
-		result = self.__stop_service.call(self.req)
-		if not result.success:
-			self._node.get_logger().error(
-				f"MoveIt Servo could not be disabled. ({result.message})"
-			)
-		self.__is_enabled = False
-	
-	def request_servo_start_async(self):
-		self.future = self.__start_service.call_async(self.req)
-		
-
-	def request_servo_stop_async(self):
-		self.future = self.__stop_service.call_async(self.req)
-	
 	def teleop(self):
-		qos_profile = QoSProfile(depth=20)
-		pub = self.create_publisher(TwistStamped, '/delta_twist_cmds', qos_profile)
 
 		speed = 0.5
 		turn = 1.0
@@ -122,8 +80,7 @@ class ServoClientNode(Node):
 				twist.angular.x = 0.0
 				twist.angular.y = 0.0
 				twist.angular.z = th*turn
-				pub.publish(twist_msg)
-
+				self.moveit2_servo(linear=(twist.linear.x, twist.linear.y, twist.linear.z), angular=(twist.angular.x, twist.angular.y, twist.angular.z))
 		except Exception as e:
 			print(e)
 
@@ -138,8 +95,8 @@ class ServoClientNode(Node):
 			twist.angular.x = 0.0
 			twist.angular.y = 0.0
 			twist.angular.z = 0.0
-			pub.publish(twist_msg)
-
+			self.moveit2_servo(linear=(twist.linear.x, twist.linear.y, twist.linear.z), angular=(twist.angular.x, twist.angular.y, twist.angular.z))
+			
 			termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
 
 
@@ -216,36 +173,12 @@ def main():
 	client = ServoClientNode()
 
 	
-	if client.servo_control_mode == "async":
-		print("enabling Servo")
-		client.request_servo_start_async()
-		while rclpy.ok():
-			time.sleep(0.1)
-			if client.future.done():
-				try:
-					response = client.future.result()
-					print("Servo started succesfully", response)
-				except Exception as e:
-					print("Service call failed", e)
-	elif client.servo_control_mode == "sync":
-		raise NotImplementedError()	
+	
 	print("starting teleop")
 	client.teleop()
 	
 
-	if client.servo_control_mode == "async":
-		print("disabling Servo")
-		client.request_servo_stop_async()
-		while rclpy.ok():
-			time.sleep(0.1)
-			if client.future.done():
-				try:
-					response = client.future.result()
-					print("Servo stopped succesfully", response)
-				except Exception as e:
-					print(f"Service call failed", e)
-	elif client.servo_control_mode == "sync":
-		raise NotImplementedError()	
+	
 	
 	client.destroy_node()
 	rclpy.shutdown()
