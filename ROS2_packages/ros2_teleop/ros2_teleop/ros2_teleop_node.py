@@ -12,8 +12,6 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import TwistStamped
 
-from pymoveit2 import MoveIt2Servo
-from pymoveit2.robots import panda
 from std_srvs.srv import Trigger
 
 import sys, select, termios, tty
