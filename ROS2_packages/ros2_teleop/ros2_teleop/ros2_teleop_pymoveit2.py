@@ -33,6 +33,7 @@ class ServoClientNode(Node):
 			frame_id=panda.base_link_name(),
 			callback_group=callback_group,
 		)
+		print("moveit2 servo initialized")
 
 	def teleop(self):
 
