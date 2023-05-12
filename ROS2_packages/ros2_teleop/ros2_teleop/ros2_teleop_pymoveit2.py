@@ -15,6 +15,7 @@ from sensor_msgs.msg import Joy
 from pymoveit2 import MoveIt2Servo
 from pymoveit2.robots import panda
 from std_srvs.srv import Trigger
+from keyboard_msgs.msg import KeyboardState
 
 import sys, select, termios, tty
 
@@ -37,18 +38,40 @@ class ServoClientNode(Node):
         )
         print("moveit2 servo initialized")
 
-        # Create joy subscriber
-        super().__init__('joy_subscriber')
+        # Create joystick subscriber
         self.subscription = self.create_subscription(
             Joy,
             '/joy',
-            self.listener_callback,
+            self.joy_listener_callback,
             10)
         self.subscription  # prevent unused variable warning
 
-    def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg.data)
+        # Create keyboard subscriber
+        self.subscription = self.create_subscription(
+            KeyboardState,
+            '/keyboard_msgs',
+            self.keyboard_listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
+
+        self.last_joystick = Joy()
+        self.last_keyboard = KeyboardState()
+
+    def joy_listener_callback(self, msg):
+        self.last_joystick = msg
+        self.update_command()
+        #self.get_logger().info(f'Joystick: {msg}')
     
+    def keyboard_listener_callback(self, msg):
+        self.last_keyboard = msg
+        #self.get_logger().info(f'Keyboard: {msg}')
+    
+    def update_command(self):
+        j = self.last_joystick
+        k = self.last_keyboard
+        self.get_logger().info(f"Merging data {j} {k}")
+
+
     def send_twist(self, Lx, Ly, Lz, Ax, Ay, Az):
         twist_msg = TwistStamped()
         twist = twist_msg.twist
@@ -194,17 +217,11 @@ def vels(speed,turn):
 
 def main():	
     rclpy.init()
-    client = ServoClientNode()
+    node = ServoClientNode()
 
+    rclpy.spin(node)
     
-    print("starting teleop")
-    client.teleop()
-    
-
-
-    
-    
-    client.destroy_node()
+    node.destroy_node()
     rclpy.shutdown()
 
 
