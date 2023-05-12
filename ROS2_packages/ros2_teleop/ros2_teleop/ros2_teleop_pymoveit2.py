@@ -2,16 +2,16 @@
 import rclpy
 import time
 from rclpy.qos import (
-	QoSDurabilityPolicy,
-	QoSHistoryPolicy,
-	QoSProfile,
-	QoSReliabilityPolicy,
+    QoSDurabilityPolicy,
+    QoSHistoryPolicy,
+    QoSProfile,
+    QoSReliabilityPolicy,
 )
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import TwistStamped
-
+from sensor_msgs.msg import Joy
 from pymoveit2 import MoveIt2Servo
 from pymoveit2.robots import panda
 from std_srvs.srv import Trigger
@@ -22,83 +22,106 @@ settings = termios.tcgetattr(sys.stdin)
 
 class ServoClientNode(Node):
 
-	def __init__(self):
-		super().__init__('teleop_twist_keyboard')
-		# Create callback group that allows execution of callbacks in parallel without restrictions
-		callback_group = ReentrantCallbackGroup()
+    def __init__(self):
+        
+        # Create teleop twist keyboard
+        super().__init__('teleop_twist_keyboard')
+        # Create callback group that allows execution of callbacks in parallel without restrictions
+        callback_group = ReentrantCallbackGroup()
 
-		# Create MoveIt 2 Servo interface
-		self.moveit2_servo = MoveIt2Servo(
-			node=self,
-			frame_id=panda.base_link_name(),
-			callback_group=callback_group,
-		)
-		print("moveit2 servo initialized")
+        # Create MoveIt 2 Servo interface
+        self.moveit2_servo = MoveIt2Servo(
+            node=self,
+            frame_id=panda.base_link_name(),
+            callback_group=callback_group,
+        )
+        print("moveit2 servo initialized")
 
-	def teleop(self):
+        # Create joy subscriber
+        super().__init__('joy_subscriber')
+        self.subscription = self.create_subscription(
+            Joy,
+            '/joy',
+            self.listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
 
-		speed = 0.5
-		turn = 1.0
-		x = 0
-		y = 0
-		z = 0
-		th = 0
-		status = 0
+    def listener_callback(self, msg):
+        self.get_logger().info('I heard: "%s"' % msg.data)
+    
+    def send_twist(self, Lx, Ly, Lz, Ax, Ay, Az):
+        twist_msg = TwistStamped()
+        twist = twist_msg.twist
+        twist_msg.header.stamp = self.get_clock().now().to_msg()
+        twist_msg.header.frame_id = "panda_link0"
+        twist.linear.x = float(Lx)
+        twist.linear.y = float(Ly)
+        twist.linear.z = float(Lz)
+        twist.angular.x = float(Ax)
+        twist.angular.y = float(Ay)
+        twist.angular.z = float(Az)
+        self.moveit2_servo(linear=(twist.linear.x, twist.linear.y, twist.linear.z), angular=(twist.angular.x, twist.angular.y, twist.angular.z))
 
-		try:
-			print(msg)
-			print(vels(speed,turn))
-			while(1):
-				key = getKey()
-				if key in moveBindings.keys():
-					x = moveBindings[key][0]
-					y = moveBindings[key][1]
-					z = moveBindings[key][2]
-					th = moveBindings[key][3]
-				elif key in speedBindings.keys():
-					speed = speed * speedBindings[key][0]
-					turn = turn * speedBindings[key][1]
+    def teleop(self):
 
-					print(vels(speed,turn))
-					if (status == 14):
-						print(msg)
-					status = (status + 1) % 15
-				else:
-					x = 0
-					y = 0
-					z = 0
-					th = 0
-					if (key == '\x03'):
-						break
+        speed = 0.5
+        turn = 1.0
+        x = 0
+        y = 0
+        z = 0
+        th = 0
+        status = 0
 
-				twist_msg = TwistStamped()
-				twist = twist_msg.twist
-				twist_msg.header.stamp = self.get_clock().now().to_msg()
-				twist_msg.header.frame_id = "panda_link0"
-				twist.linear.x = x*speed
-				twist.linear.y = y*speed
-				twist.linear.z = z*speed
-				twist.angular.x = 0.0
-				twist.angular.y = 0.0
-				twist.angular.z = th*turn
-				self.moveit2_servo(linear=(twist.linear.x, twist.linear.y, twist.linear.z), angular=(twist.angular.x, twist.angular.y, twist.angular.z))
-		except Exception as e:
-			print(e)
+        try:
+            print(msg)
+            print(vels(speed,turn))
+            while(1):
+                key = getKey()
+                if key in moveBindings.keys():
+                    x = moveBindings[key][0]
+                    y = moveBindings[key][1]
+                    z = moveBindings[key][2]
+                    th = moveBindings[key][3]
+                elif key in speedBindings.keys():
+                    speed = speed * speedBindings[key][0]
+                    turn = turn * speedBindings[key][1]
 
-		finally:
-			twist_msg = TwistStamped()
-			twist = twist_msg.twist
-			twist_msg.header.stamp = self.get_clock().now().to_msg()
-			twist_msg.header.frame_id = "panda_link0"
-			twist.linear.x = 0.0
-			twist.linear.y = 0.0
-			twist.linear.z = 0.0
-			twist.angular.x = 0.0
-			twist.angular.y = 0.0
-			twist.angular.z = 0.0
-			self.moveit2_servo(linear=(twist.linear.x, twist.linear.y, twist.linear.z), angular=(twist.angular.x, twist.angular.y, twist.angular.z))
-			
-			termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+                    print(vels(speed,turn))
+                    if (status == 14):
+                        print(msg)
+                    status = (status + 1) % 15
+                else:
+                    x = 0
+                    y = 0
+                    z = 0
+                    th = 0
+                    if (key == '\x03'):
+                        break
+                # set linear and angular speeds
+                Lx = x*speed
+                Ly = y*speed
+                Lz = z*speed
+                Ax = 0
+                Ay = 0
+                Az = th*turn
+                # send twist message
+                self.send_twist(Lx, Ly, Lz, Ax, Ay, Az)
+                
+
+        except Exception as e:
+            print(e)
+
+        finally:
+            # set linear and angular speeds
+            Lx = 0
+            Ly = 0
+            Lz = 0
+            Ax = 0
+            Ay = 0
+            Az = 0
+            # send twist message
+            self.send_twist(Lx, Ly, Lz, Ax, Ay, Az)
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
 
 
 msg = """
@@ -128,61 +151,61 @@ CTRL-C to quit
 """
 
 moveBindings = {
-		'i':(1,0,0,0),
-		'o':(1,0,0,-1),
-		'j':(0,0,0,1),
-		'l':(0,0,0,-1),
-		'u':(1,0,0,1),
-		',':(-1,0,0,0),
-		'.':(-1,0,0,1),
-		'm':(-1,0,0,-1),
-		'O':(1,-1,0,0),
-		'I':(1,0,0,0),
-		'J':(0,1,0,0),
-		'L':(0,-1,0,0),
-		'U':(1,1,0,0),
-		'<':(-1,0,0,0),
-		'>':(-1,-1,0,0),
-		'M':(-1,1,0,0),
-		't':(0,0,1,0),
-		'b':(0,0,-1,0),
-		   }
+        'i':(1,0,0,0),
+        'o':(1,0,0,-1),
+        'j':(0,0,0,1),
+        'l':(0,0,0,-1),
+        'u':(1,0,0,1),
+        ',':(-1,0,0,0),
+        '.':(-1,0,0,1),
+        'm':(-1,0,0,-1),
+        'O':(1,-1,0,0),
+        'I':(1,0,0,0),
+        'J':(0,1,0,0),
+        'L':(0,-1,0,0),
+        'U':(1,1,0,0),
+        '<':(-1,0,0,0),
+        '>':(-1,-1,0,0),
+        'M':(-1,1,0,0),
+        't':(0,0,1,0),
+        'b':(0,0,-1,0),
+           }
 
 speedBindings={
-		'q':(1.1,1.1),
-		'z':(.9,.9),
-		'w':(1.1,1),
-		'x':(.9,1),
-		'e':(1,1.1),
-		'c':(1,.9),
-		  }
+        'q':(1.1,1.1),
+        'z':(.9,.9),
+        'w':(1.1,1),
+        'x':(.9,1),
+        'e':(1,1.1),
+        'c':(1,.9),
+          }
 
 def getKey():
-	tty.setraw(sys.stdin.fileno())
-	select.select([sys.stdin], [], [], 0)
-	key = sys.stdin.read(1)
-	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-	return key
+    tty.setraw(sys.stdin.fileno())
+    select.select([sys.stdin], [], [], 0)
+    key = sys.stdin.read(1)
+    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    return key
 
 
 def vels(speed,turn):
-	return "currently:\tspeed %s\tturn %s " % (speed,turn)
+    return "currently:\tspeed %s\tturn %s " % (speed,turn)
 
 
 def main():	
-	rclpy.init()
-	client = ServoClientNode()
+    rclpy.init()
+    client = ServoClientNode()
 
-	
-	
-	print("starting teleop")
-	client.teleop()
-	
-
-	
-	
-	client.destroy_node()
-	rclpy.shutdown()
+    
+    print("starting teleop")
+    client.teleop()
+    
 
 
-	
+    
+    
+    client.destroy_node()
+    rclpy.shutdown()
+
+
+    

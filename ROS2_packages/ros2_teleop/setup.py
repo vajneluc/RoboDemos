@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'ros2_teleop_node = ros2_teleop.ros2_teleop_node:main',
-            'ros2_teleop_pymoveit2 = ros2_teleop.ros2_teleop_pymoveit2:main'
+            'ros2_teleop_pymoveit2 = ros2_teleop.ros2_teleop_pymoveit2:main',
+            'keyboard_control = ros2_teleop.keyboard_control:main'
      ],
     },
 )
