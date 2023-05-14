@@ -115,7 +115,7 @@ def main():
     rclpy.init()
     node = KeyboardControlNode()
 
-    print("starting keyboard state publisher")
+    print("Starting keyboard state publisher")
     rclpy.spin(node)
     
     rclpy.shutdown()
