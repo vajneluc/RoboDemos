@@ -26,7 +26,7 @@ class ServoClientNode(Node):
     def __init__(self):
         
         # Create teleop twist keyboard
-        super().__init__('teleop_twist_keyboard')
+        super().__init__('teleop_pymoveit2')
         # Create callback group that allows execution of callbacks in parallel without restrictions
         callback_group = ReentrantCallbackGroup()
 
