@@ -39,4 +39,25 @@ ros2 service call /servo_node/start_servo std_srvs/srv/Trigger
 # Run the node
 ros2 run ros2_teleop ros2_teleop_pymoveit2
 ```
+## Keybindings
+### Controller
+#### Move
+* R_JOYSTICK (X + Y Axis)
+* L_JOYSTICK_UP/DOWN (Z Axis)
+#### Turn
+* ARROW BUTTONS (X + Y Axis)
+* L_JOYSTICK_LEFT/RIGHT (Z Axis)
+#### Speed
+* I K (Linear speed)
+* O L (Angular speed)
+### Keyboard
+#### Move
+* W A S D (X + Y Axis)
+* SHIFT or CTRL (Z Axis)
+#### Turn
+* ARROW KEYS (X + Y Axis)
+* Q E (Z Axis)
+#### Speed
+* BUTTON4 BUTTON1 (Linear speed)
+* BUTTON2 BUTTON3 (Angular speed)
 
