@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rclpy
-import time
+import sys, select, termios, tty
 from rclpy.qos import (
     QoSDurabilityPolicy,
     QoSHistoryPolicy,
@@ -9,15 +9,12 @@ from rclpy.qos import (
 )
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
-from geometry_msgs.msg import Twist
 from geometry_msgs.msg import TwistStamped
 from sensor_msgs.msg import Joy
 from pymoveit2 import MoveIt2Servo
 from pymoveit2.robots import panda
-from std_srvs.srv import Trigger
 from keyboard_msgs.msg import KeyboardState
 
-import sys, select, termios, tty
 
 settings = termios.tcgetattr(sys.stdin)
 
@@ -216,38 +213,6 @@ class ServoClientNode(Node):
             Az = key_az * self.angular_speed
 
         self.send_twist(Lx, Ly, Lz, Ax, Ay, Az)
-
-
-
-
-
-
-
-msg = """
-Reading from the keyboard  and Publishing to Twist!
----------------------------
-Moving around:
-   u    i    o
-   j    k    l
-   m    ,    .
-
-For Holonomic mode (strafing), hold down the shift key:
----------------------------
-   U    I    O
-   J    K    L
-   M    <    >
-
-t : up (+z)
-b : down (-z)
-
-anything else : stop
-
-q/z : increase/decrease max speeds by 10%
-w/x : increase/decrease only linear speed by 10%
-e/c : increase/decrease only angular speed by 10%
-
-CTRL-C to quit
-"""
 
 def main():	
     rclpy.init()
