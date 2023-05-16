@@ -42,9 +42,10 @@ class KeyboardControlNode(Node):
             "a" : False,
             "s" : False,
             "d" : False,
-            "z" : False,
-            "x" : False,
-            "c" : False,
+            "i" : False,
+            "k" : False,
+            "o" : False,
+            "l" : False,
             Key.up : False,
             Key.down : False,
             Key.right : False,
@@ -57,7 +58,7 @@ class KeyboardControlNode(Node):
             10
         )
 
-        print("Listening to keyboartd events...")
+        print("Listening to keyboard events...")
         with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as listener:
             listener.join()
 
@@ -97,9 +98,10 @@ class KeyboardControlNode(Node):
         msg.key_a = self.pressed_keys["a"]
         msg.key_s = self.pressed_keys["s"]
         msg.key_d = self.pressed_keys["d"]
-        msg.key_z = self.pressed_keys["z"]
-        msg.key_x = self.pressed_keys["x"]
-        msg.key_c = self.pressed_keys["c"]
+        msg.key_i = self.pressed_keys["i"]
+        msg.key_k = self.pressed_keys["k"]
+        msg.key_o = self.pressed_keys["o"]
+        msg.key_l = self.pressed_keys["l"]
         msg.key_up = self.pressed_keys[Key.up]
         msg.key_down = self.pressed_keys[Key.down]
         msg.key_right = self.pressed_keys[Key.right]

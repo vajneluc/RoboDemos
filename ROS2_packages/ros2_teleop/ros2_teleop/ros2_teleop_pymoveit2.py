@@ -45,7 +45,7 @@ class ServoClientNode(Node):
             self.joy_listener_callback,
             10)
         self.subscription  # prevent unused variable warning
-
+        
         # Create keyboard subscriber
         self.subscription = self.create_subscription(
             KeyboardState,
@@ -54,8 +54,12 @@ class ServoClientNode(Node):
             10)
         self.subscription  # prevent unused variable warning
 
-        self.last_joystick = Joy()
         self.last_keyboard = KeyboardState()
+        self.last_joystick = Joy()
+        
+        # Default speeds
+        self.linear_speed = 1
+        self.angular_speed = 2
 
     def joy_listener_callback(self, msg):
         self.last_joystick = msg
@@ -66,12 +70,6 @@ class ServoClientNode(Node):
         self.last_keyboard = msg
         #self.get_logger().info(f'Keyboard: {msg}')
     
-    def update_command(self):
-        j = self.last_joystick
-        k = self.last_keyboard
-        self.get_logger().info(f"Merging data {j} {k}")
-
-
     def send_twist(self, Lx, Ly, Lz, Ax, Ay, Az):
         twist_msg = TwistStamped()
         twist = twist_msg.twist
@@ -83,68 +81,146 @@ class ServoClientNode(Node):
         twist.angular.x = float(Ax)
         twist.angular.y = float(Ay)
         twist.angular.z = float(Az)
-        self.moveit2_servo(linear=(twist.linear.x, twist.linear.y, twist.linear.z), angular=(twist.angular.x, twist.angular.y, twist.angular.z))
+        self.moveit2_servo(linear=(twist.linear.x, twist.linear.y, twist.linear.z), 
+                           angular=(twist.angular.x, twist.angular.y, twist.angular.z))
+    
+    def update_command(self):
+        j = self.last_joystick
+        k = self.last_keyboard
+        self.get_logger().info(f"\nLinear speed: {round(self.linear_speed, 3)} \nAngular speed: {round(self.angular_speed, 3)}")
 
-    def teleop(self):
+        # Joystick speed settings
+        coefficients = [0.9, 1.1]
+        
+        # Linear speed
+        if j.buttons[0]:
+            self.linear_speed *= coefficients[0]
+        elif j.buttons[3]:
+            self.linear_speed *= coefficients[1]
+        
+        # Angular speed
+        if j.buttons[2]:
+            self.angular_speed *= coefficients[0]
+        elif j.buttons[1]:
+            self.angular_speed *= coefficients[1]
 
-        speed = 0.5
-        turn = 1.0
-        x = 0
-        y = 0
-        z = 0
-        th = 0
-        status = 0
+        # Initialize twist linear and angular values
+        Lx = 0
+        Ly = 0
+        Lz = 0
+        Ax = 0
+        Ay = 0
+        Az = 0
+        
+        # Joystick bindings
+        # twist.linear
+        joy_x = j.axes[4]
+        joy_y = j.axes[3]
+        joy_z = j.axes[1]
+            
+        # twist.angular
+        joy_ax = j.axes[6]
+        joy_ay = j.axes[7]
+        joy_az = j.axes[0]
 
-        try:
-            print(msg)
-            print(vels(speed,turn))
-            while(1):
-                key = getKey()
-                if key in moveBindings.keys():
-                    x = moveBindings[key][0]
-                    y = moveBindings[key][1]
-                    z = moveBindings[key][2]
-                    th = moveBindings[key][3]
-                elif key in speedBindings.keys():
-                    speed = speed * speedBindings[key][0]
-                    turn = turn * speedBindings[key][1]
+        # Tolerance settings for joystick bindings
+        tolerance = 0.2
+        # X Axis
+        if abs(joy_x) >= tolerance:
+            Lx = joy_x * self.linear_speed
+        # Y Axis
+        if abs(joy_y) >= tolerance:
+            Ly = joy_y * self.linear_speed
+        # Z Axis
+        if abs(joy_z) >= tolerance:
+            Lz = joy_z * self.linear_speed
+        # Z Axis turn
+        if abs(joy_az) >= tolerance:
+            Az = joy_az * self.angular_speed
 
-                    print(vels(speed,turn))
-                    if (status == 14):
-                        print(msg)
-                    status = (status + 1) % 15
-                else:
-                    x = 0
-                    y = 0
-                    z = 0
-                    th = 0
-                    if (key == '\x03'):
-                        break
-                # set linear and angular speeds
-                Lx = x*speed
-                Ly = y*speed
-                Lz = z*speed
-                Ax = 0
-                Ay = 0
-                Az = th*turn
-                # send twist message
-                self.send_twist(Lx, Ly, Lz, Ax, Ay, Az)
-                
+        # Controler button settings
+        # Z Axis turn
+        Ax = - joy_ax * self.angular_speed
+        # Y Axis turn
+        Ay = joy_ay * self.angular_speed
+        
+        # If no input from joystick, use keyboard
+        if Lx == Ly == Lz == Ax == Ay == Az == 0:
+            print("No input from Joystick, using Keyboard!")
+            
+            # Keyboard speed settings
+            # Linear speed
+            if k.key_k:
+                self.linear_speed *= coefficients[0]
+            elif k.key_i:
+                self.linear_speed *= coefficients[1]
+            
+            # Angular speed
+            if k.key_l:
+                self.angular_speed *= coefficients[0]
+            elif k.key_o:
+                self.angular_speed *= coefficients[1]
 
-        except Exception as e:
-            print(e)
+            # Keyboard bindings
+            # twist.linear
+            key_x = 0
+            key_y = 0
+            key_z = 0
 
-        finally:
-            # set linear and angular speeds
-            Lx = 0
-            Ly = 0
-            Lz = 0
-            Ax = 0
-            Ay = 0
-            Az = 0
-            # send twist message
-            self.send_twist(Lx, Ly, Lz, Ax, Ay, Az)
-            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+            # twist angular
+            key_ax = 0
+            key_ay = 0
+            key_az = 0
+
+            # X Axis
+            if k.key_w:
+                key_x = 1
+            elif k.key_s:
+                key_x = -1
+            
+            # Y Axis
+            if k.key_a:
+                key_y = 1
+            elif k.key_d:
+                key_y = -1
+            
+            # Z Axis
+            if k.key_shift:
+                key_z = 1
+            elif k.key_ctrl:
+                key_z = -1
+            
+            # X Axis turn
+            if k.key_right:
+                key_ax = 1
+            elif k.key_left:
+                key_ax = -1
+
+            # Y Axis turn
+            if k.key_up:
+                key_ay = 1
+            elif k.key_down:
+                key_ay = -1
+
+            # Z Axis turn
+            if k.key_q:
+                key_az = 1
+            elif k.key_e:
+                key_az = -1
+
+            Lx = key_x * self.linear_speed
+            Ly = key_y * self.linear_speed
+            Lz = key_z * self.linear_speed
+            Ax = key_ax * self.angular_speed
+            Ay = key_ay * self.angular_speed
+            Az = key_az * self.angular_speed
+
+        self.send_twist(Lx, Ly, Lz, Ax, Ay, Az)
+
+
+
+
+
 
 
 msg = """
@@ -172,48 +248,6 @@ e/c : increase/decrease only angular speed by 10%
 
 CTRL-C to quit
 """
-
-moveBindings = {
-        'i':(1,0,0,0),
-        'o':(1,0,0,-1),
-        'j':(0,0,0,1),
-        'l':(0,0,0,-1),
-        'u':(1,0,0,1),
-        ',':(-1,0,0,0),
-        '.':(-1,0,0,1),
-        'm':(-1,0,0,-1),
-        'O':(1,-1,0,0),
-        'I':(1,0,0,0),
-        'J':(0,1,0,0),
-        'L':(0,-1,0,0),
-        'U':(1,1,0,0),
-        '<':(-1,0,0,0),
-        '>':(-1,-1,0,0),
-        'M':(-1,1,0,0),
-        't':(0,0,1,0),
-        'b':(0,0,-1,0),
-           }
-
-speedBindings={
-        'q':(1.1,1.1),
-        'z':(.9,.9),
-        'w':(1.1,1),
-        'x':(.9,1),
-        'e':(1,1.1),
-        'c':(1,.9),
-          }
-
-def getKey():
-    tty.setraw(sys.stdin.fileno())
-    select.select([sys.stdin], [], [], 0)
-    key = sys.stdin.read(1)
-    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-    return key
-
-
-def vels(speed,turn):
-    return "currently:\tspeed %s\tturn %s " % (speed,turn)
-
 
 def main():	
     rclpy.init()

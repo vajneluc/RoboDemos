@@ -8,9 +8,10 @@ bool key_e
 bool key_a
 bool key_s
 bool key_d
-bool key_z
-bool key_x
-bool key_c
+bool key_i
+bool key_k
+bool key_o
+bool key_l
 bool key_up
 bool key_down
 bool key_right
