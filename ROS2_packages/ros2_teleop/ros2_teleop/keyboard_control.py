@@ -22,7 +22,7 @@ class KeyboardControlNode(Node):
     def __init__(self):
         
         # Create teleop twist keyboard
-        super().__init__('teleop_twist_keyboard')
+        super().__init__('keyboard_control')
 
         self.pressed_keys = {
             "q" : False,
