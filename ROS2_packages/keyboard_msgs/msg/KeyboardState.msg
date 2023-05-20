@@ -1,19 +1,16 @@
-bool key_esc
-bool key_enter
-bool key_shift
-bool key_ctrl
 bool key_q
 bool key_w
 bool key_e
 bool key_a
 bool key_s
 bool key_d
+bool key_r
+bool key_f
+bool key_u
 bool key_i
-bool key_k
 bool key_o
-bool key_l
-bool key_up
-bool key_down
-bool key_right
-bool key_left
+bool key_j
+bool key_k
+bool key_y
+bool key_h
 

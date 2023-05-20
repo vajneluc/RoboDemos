@@ -18,6 +18,7 @@ from keyboard_msgs.msg import KeyboardState
 
 settings = termios.tcgetattr(sys.stdin)
 
+
 class ServoClientNode(Node):
 
     def __init__(self):
@@ -147,15 +148,15 @@ class ServoClientNode(Node):
             
             # Keyboard speed settings
             # Linear speed
-            if k.key_k:
+            if k.key_r:
                 self.linear_speed *= coefficients[0]
-            elif k.key_i:
+            elif k.key_f:
                 self.linear_speed *= coefficients[1]
             
             # Angular speed
-            if k.key_l:
+            if k.key_y:
                 self.angular_speed *= coefficients[0]
-            elif k.key_o:
+            elif k.key_h:
                 self.angular_speed *= coefficients[1]
 
             # Keyboard bindings
@@ -182,27 +183,27 @@ class ServoClientNode(Node):
                 key_y = -1
             
             # Z Axis
-            if k.key_shift:
+            if k.key_q:
                 key_z = 1
-            elif k.key_ctrl:
+            elif k.key_e:
                 key_z = -1
             
             # X Axis turn
-            if k.key_right:
+            if k.key_l:
                 key_ax = 1
-            elif k.key_left:
+            elif k.key_j:
                 key_ax = -1
 
             # Y Axis turn
-            if k.key_up:
+            if k.key_i:
                 key_ay = 1
-            elif k.key_down:
+            elif k.key_k:
                 key_ay = -1
 
             # Z Axis turn
-            if k.key_q:
+            if k.key_u:
                 key_az = 1
-            elif k.key_e:
+            elif k.key_o:
                 key_az = -1
 
             Lx = key_x * self.linear_speed

@@ -6,11 +6,6 @@ from rclpy.node import Node
 from dummy_control_msgs.msg import DummyControlDebug
 
 
-# rosbag2 API:
-# https://ternaris.gitlab.io/rosbags/topics/rosbag2.html
-from rosbags.rosbag2 import Reader
-from rosbags.serde import deserialize_cdr
-
 # pinocchio API:
 # https://gepettoweb.laas.fr/doc/stack-of-tasks/pinocchio/master/doxygen-html/md_doc_b-examples_display_b-meshcat-viewer.html
 import pinocchio as pin 
@@ -21,6 +16,14 @@ import meshcat
 import meshcat.geometry as g
 import meshcat.transformations as tf
 
+axes_displayed = input("Display panda joint axes?\nEnter up to seven numbers (1 - 7)\n:").split()
+allowed = [str(x) for x in range(1,8)]
+for a in axes_displayed:
+    if a not in allowed:
+        print("Input Error")
+        quit()
+    else:
+        continue
 
 class MeshcatVisualizerNode(Node):
     
@@ -40,8 +43,8 @@ class MeshcatVisualizerNode(Node):
         self.last_dummy = DummyControlDebug()
 
         # Load URDF model
-        self.mesh_dir = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"
-        self.urdf_model_path = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda.urdf"
+        self.mesh_dir = "/home/julius/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"
+        self.urdf_model_path = "/home/julius/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda.urdf"
         
         # Build from URDF
         self.model, self.collision_model, self.visual_model = pin.buildModelsFromUrdf(
@@ -78,31 +81,34 @@ class MeshcatVisualizerNode(Node):
         Ry = tf.rotation_matrix(np.pi, x_axis)
         Rz = tf.rotation_matrix(np.pi/2, z_axis)
         axes_translation = tf.translation_matrix([0, -AXIS_HEIGHT/2, 0])
-
-        self.viz.viewer["AXES"]["EE"].set_object(g.Sphere(0.02), 
-            g.MeshLambertMaterial(
-                color=0x000000,
-                reflectivity=0.8)) 
-        # X Axis
-        self.viz.viewer["AXES"]["X"].set_object(g.Cylinder(height=AXIS_HEIGHT, radius=AXIS_RADIUS), 
-            g.MeshLambertMaterial(
-                color=0xFF0000,
-                reflectivity=0.8))
-        self.viz.viewer["AXES"]["X"].set_transform(Rz @ axes_translation)
         
-        # Y Axis
-        self.viz.viewer["AXES"]["Y"].set_object(g.Cylinder(AXIS_HEIGHT, radius=AXIS_RADIUS), 
-            g.MeshLambertMaterial(
-                color=0x008000,
-                reflectivity=0.8))
-        self.viz.viewer["AXES"]["Y"].set_transform(Ry @ axes_translation)
+        axes_displayed.sort()
+        for axe_index in axes_displayed:
 
-        # Z Axis
-        self.viz.viewer["AXES"]["Z"].set_object(g.Cylinder(AXIS_HEIGHT, radius=AXIS_RADIUS), 
-            g.MeshLambertMaterial(
-                color=0x0000FF,
-                reflectivity=0.8))
-        self.viz.viewer["AXES"]["Z"].set_transform(Rx @ axes_translation)
+            self.viz.viewer["AXES"][axe_index]["EE"].set_object(g.Sphere(0.02), 
+                g.MeshLambertMaterial(
+                    color=0x000000,
+                    reflectivity=0.8)) 
+            # X Axis
+            self.viz.viewer["AXES"][axe_index]["X"].set_object(g.Cylinder(height=AXIS_HEIGHT, radius=AXIS_RADIUS), 
+                g.MeshLambertMaterial(
+                    color=0xFF0000,
+                    reflectivity=0.8))
+            self.viz.viewer["AXES"][axe_index]["X"].set_transform(Rz @ axes_translation)
+            
+            # Y Axis
+            self.viz.viewer["AXES"][axe_index]["Y"].set_object(g.Cylinder(AXIS_HEIGHT, radius=AXIS_RADIUS), 
+                g.MeshLambertMaterial(
+                    color=0x008000,
+                    reflectivity=0.8))
+            self.viz.viewer["AXES"][axe_index]["Y"].set_transform(Ry @ axes_translation)
+
+            # Z Axis
+            self.viz.viewer["AXES"][axe_index]["Z"].set_object(g.Cylinder(AXIS_HEIGHT, radius=AXIS_RADIUS), 
+                g.MeshLambertMaterial(
+                    color=0x0000FF,
+                    reflectivity=0.8))
+            self.viz.viewer["AXES"][axe_index]["Z"].set_transform(Rx @ axes_translation)
         
     def dummy_listener_callback(self, msg):
         self.last_dummy = msg
@@ -110,19 +116,22 @@ class MeshcatVisualizerNode(Node):
         # self.get_logger().info(f'Dummy msgs: {msg}')
  
     def update(self):
+
         # Updates position of panda
         q_index = 7
         self.q[q_index:q_index+7] = self.last_dummy.position[:7]
         self.viz.display(self.q)
 
         # Updates position of axes
-        pin.forwardKinematics(self.model, self.viz.data, self.q)
-        placement = self.viz.data.oMi[9]
-        t_matrix = tf.translation_matrix(placement.translation)   
-        r_matrix = placement.rotation
-        t_matrix[0:3,0:3] = r_matrix
-        print(f"placement.rotation: \n {placement.rotation} \n placement.translation {placement.translation}")
-        self.viz.viewer["AXES"].set_transform(t_matrix)
+        for axe_index in axes_displayed:
+            pin.forwardKinematics(self.model, self.viz.data, self.q)
+            placement = self.viz.data.oMi[int(axe_index) + 2]
+            t_matrix = tf.translation_matrix(placement.translation)   
+            r_matrix = placement.rotation
+            t_matrix[0:3,0:3] = r_matrix
+           #print(f"placement.rotation: \n {placement.rotation} \n placement.translation {placement.translation}")
+            self.viz.viewer["AXES"][axe_index].set_transform(t_matrix)
+
 
 
 def main():	

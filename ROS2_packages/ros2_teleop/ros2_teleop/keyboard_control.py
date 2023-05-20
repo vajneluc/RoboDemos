@@ -8,17 +8,10 @@ from rclpy.qos import (
     QoSReliabilityPolicy,
 )
 from rclpy.node import Node
-from rclpy.callback_groups import ReentrantCallbackGroup
-from geometry_msgs.msg import Twist
-from geometry_msgs.msg import TwistStamped
-from sensor_msgs.msg import Joy
-from pymoveit2 import MoveIt2Servo
-from pymoveit2.robots import panda
-from std_srvs.srv import Trigger
-
 from keyboard_msgs.msg import KeyboardState
-from pynput import keyboard
-from pynput.keyboard import Key
+#from pynput import keyboard
+#from pynput.keyboard import Key
+from sshkeyboard import listen_keyboard
 
 import sys, select, termios, tty
 
@@ -32,24 +25,22 @@ class KeyboardControlNode(Node):
         super().__init__('teleop_twist_keyboard')
 
         self.pressed_keys = {
-            Key.esc : False,
-            Key.enter : False,
-            Key.shift : False,
-            Key.ctrl : False,
             "q" : False,
             "w" : False,
             "e" : False,
             "a" : False,
             "s" : False,
             "d" : False,
+            "r" : False,
+            "f" : False,
+            "u" : False,
             "i" : False,
-            "k" : False,
             "o" : False,
+            "j" : False,
+            "k" : False,
             "l" : False,
-            Key.up : False,
-            Key.down : False,
-            Key.right : False,
-            Key.left : False,
+            "y" : False,
+            "h" : False,
         }
 
         self.publisher = self.create_publisher(
@@ -58,54 +49,42 @@ class KeyboardControlNode(Node):
             10
         )
 
-        print("Listening to keyboard events...")
-        with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as listener:
-            listener.join()
-
-    def on_press(self, key):
-        try:
-            # alphanumerical characters
-            lookup = key.char.lower()
-        except AttributeError:
-            # special characters
-            lookup = key
-
+    def on_press(key, self):
+        print("on press:", key)
+        lookup = key.lower()
         if lookup in self.pressed_keys:
             self.pressed_keys[lookup]=True
             self.send_keyboard_state()
-
-    def on_release(self, key):
-        try:
-            # alphanumerical characters
-            lookup = key.char.lower()
-        except AttributeError:
-            # special characters
-            lookup = key
-            
+    
+    def on_release(key, self):
+        print("on realease:", key)
+        lookup = key.lower()
         if lookup in self.pressed_keys:
             self.pressed_keys[lookup]=False
             self.send_keyboard_state()
 
+    print("Listening to keyboard events...")
+    listen_keyboard(on_press=on_press, on_release=on_release)
+    
+
     def send_keyboard_state(self):
         msg = KeyboardState()
-        msg.key_esc = self.pressed_keys[Key.esc]
-        msg.key_enter = self.pressed_keys[Key.enter]
-        msg.key_shift = self.pressed_keys[Key.shift]
-        msg.key_ctrl = self.pressed_keys[Key.ctrl]
         msg.key_q = self.pressed_keys["q"]
         msg.key_w = self.pressed_keys["w"]
         msg.key_e = self.pressed_keys["e"]
         msg.key_a = self.pressed_keys["a"]
         msg.key_s = self.pressed_keys["s"]
         msg.key_d = self.pressed_keys["d"]
+        msg.key_r = self.pressed_keys["r"]
+        msg.key_f = self.pressed_keys["f"]
+        msg.key_u = self.pressed_keys["u"]
         msg.key_i = self.pressed_keys["i"]
-        msg.key_k = self.pressed_keys["k"]
         msg.key_o = self.pressed_keys["o"]
+        msg.key_j = self.pressed_keys["j"]
+        msg.key_k = self.pressed_keys["k"]
         msg.key_l = self.pressed_keys["l"]
-        msg.key_up = self.pressed_keys[Key.up]
-        msg.key_down = self.pressed_keys[Key.down]
-        msg.key_right = self.pressed_keys[Key.right]
-        msg.key_left = self.pressed_keys[Key.left]
+        msg.key_y = self.pressed_keys["y"]
+        msg.key_h = self.pressed_keys["h"]
 
         self.publisher.publish(msg) 
 
@@ -114,12 +93,12 @@ class KeyboardControlNode(Node):
     
 
 def main():	
+    print("stage 1")
     rclpy.init()
+    print("stage 2")
     node = KeyboardControlNode()
-
     print("Starting keyboard state publisher")
     rclpy.spin(node)
-    
     rclpy.shutdown()
 
 
