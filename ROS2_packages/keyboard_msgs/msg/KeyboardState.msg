@@ -11,6 +11,7 @@ bool key_i
 bool key_o
 bool key_j
 bool key_k
+bool key_l
 bool key_y
 bool key_h
 
