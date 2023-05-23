@@ -4,6 +4,7 @@ import numpy as np
 import rclpy
 from rclpy.node import Node
 from dummy_control_msgs.msg import DummyControlDebug
+from sensor_msgs.msg import JointState
 
 
 # pinocchio API:
@@ -22,18 +23,31 @@ class MeshcatVisualizerNode(Node):
     def __init__(self):
 
         super().__init__('meshcat_visualizer')
+        # Parameter
+        self.declare_parameter('topic_source', '/joint_states')
+        data_source = self.get_parameter('topic_source').get_parameter_value().string_value
 
-        # Create dummy subscriber
-        self.subscription = self.create_subscription(
-            DummyControlDebug,
-            '/mytopic',
-            self.dummy_listener_callback,
-            10)
-        self.subscription  # prevent unused variable warning     
-        
-        # Call subsriber
-        self.last_dummy = DummyControlDebug()
-
+        if data_source == "/joint_states":
+            # Create joint state subscriber
+            self.subscription = self.create_subscription(
+                JointState,
+                '/joint_states',
+                self.joint_listener_callback,
+                10)
+            self.subscription  # prevent unused variable warning
+            # Call subsriber
+            self.last_joint = JointState()
+        else:
+            # Create dummy subscriber
+            self.subscription = self.create_subscription(
+                DummyControlDebug,
+                '/mytopic',
+                self.dummy_listener_callback,
+                10)
+            self.subscription  # prevent unused variable warning     
+            # Call subsriber
+            self.last_dummy = DummyControlDebug()
+  
         # Load URDF model
         self.mesh_dir = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"
         self.urdf_model_path = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda.urdf"
@@ -68,9 +82,26 @@ class MeshcatVisualizerNode(Node):
         
         for joint_name in self.model.names:
             if "panda_joint" in joint_name:
-                print(joint_name)
                 self.create_axes(joint_name)
         self.create_axes("ee")
+
+    def dummy_listener_callback(self, msg):
+        self.last_dummy = msg
+        self.update(msg.position[:7])
+
+
+    def joint_listener_callback(self, msg):
+        self.last_joint = msg
+        names = msg.name
+        positions = msg.position
+        out = []
+        for name, pos in zip(names, positions):
+            if "panda_joint" in  name:
+                out.append((name, pos))
+        out.sort(key=lambda x: x[0])
+        out_positions = [np[1] for np in out]
+        self.update(out_positions)
+
 
     def create_axes(self, joint_name):
         # Init Geometry
@@ -107,53 +138,31 @@ class MeshcatVisualizerNode(Node):
                 color=0x0000FF,
                 reflectivity=0.8))
         self.viz.viewer["AXES"][joint_name]["Z"].set_transform(Rx @ axes_translation)
-
-    def print_joints(self):
-        # Print out the placement of each joint of the kinematic tree
-        print("\noMi:")
-        for name, oMi in zip(self.model.names, self.viz.data.oMi):
-            print(("{:<24} : {: .2f} {: .2f} {: .2f}"
-                .format( name, *oMi.translation.T.flat )))
-    
-    def print_collision(self):
-        # Print out the placement of each collision geometry object
-        print("\noMf:")
-        for name, oMf in zip(self.model.names, self.viz.data.oMf):
-            print(("{:<24} : {: .2f} {: .2f} {: .2f}"
-                .format( name, *oMf.translation.T.flat )))
  
-    def dummy_listener_callback(self, msg):
-        self.last_dummy = msg
-        self.update()
-        # self.get_logger().info(f'Dummy msgs: {msg}')
-
     def display_joint_axes(self):
         # Display joint axis
         for joint_name, oMi in zip(self.model.names, self.viz.data.oMi):
             if "panda_joint" in joint_name:
-                print(f"joint name: {joint_name} oMi: {oMi}")
                 placement = oMi
-                #print(placement)
                 t_matrix = tf.translation_matrix(placement.translation)   
                 r_matrix = placement.rotation
                 t_matrix[0:3,0:3] = r_matrix
-                print("viewing axes for joint:", joint_name)
                 self.viz.viewer["AXES"][joint_name].set_transform(t_matrix)
         # Display ee axis 
-        placement = self.viz.data.oMi[10] # < --------------------------
+        placement = self.viz.data.oMi[9] # < --------------------------
         t_matrix = tf.translation_matrix(placement.translation)   
         r_matrix = placement.rotation
         t_matrix[0:3,0:3] = r_matrix
-        #print(f"placement.rotation: \n {placement.rotation} \n placement.translation {placement.translation}")
         self.viz.viewer["AXES"]["ee"].set_transform(t_matrix)
 
     def link_axes(self):
+        # Not implemented yet
         None
 
-    def update(self):
+    def update(self, panda_position):
         # Updates position of panda
         q_index = 7
-        self.q[q_index:q_index+7] = self.last_dummy.position[:7]
+        self.q[q_index:q_index+7] = panda_position
         self.viz.display(self.q)
         pin.forwardKinematics(self.model, self.viz.data, self.q)
         pin.updateFramePlacements(self.model, self.viz.data)
