@@ -15,16 +15,18 @@ from sshkeyboard import listen_keyboard
 
 import sys, select, termios, tty
 
-settings = termios.tcgetattr(sys.stdin)
 
 class KeyboardControlNode(Node):
 
-    def __init__(self, use_pynput=True):
+    def __init__(self):
         
         
         # Create teleop twist keyboard
         super().__init__('keyboard_control')
 
+        self.declare_parameter('use_pynput', True)
+        use_pynput = self.get_parameter('use_pynput').get_parameter_value().bool_value
+        print(use_pynput)
         self.pressed_keys = {
             "q" : False,
             "w" : False,
@@ -49,19 +51,8 @@ class KeyboardControlNode(Node):
             "keyboard_msgs",
             10
         )
-        
-        # Keyboard selection
-        self.use_pynput = use_pynput
-        self.keyboard_selection = input("Use pynput? [yes/no].")
-        if self.keyboard_selection == "no":
-              self.use_pynput = False
-        elif self.keyboard_selection == "yes":
-            pass
-        else:
-              print("Input Error. Input yes or no.")
-              quit()
             
-        if self.use_pynput:
+        if use_pynput:
             print("Using pynput keyboard.")
             print("Listening to keyboard events...")
             with keyboard.Listener(on_press=self.on_press_pyn,
@@ -103,7 +94,7 @@ class KeyboardControlNode(Node):
     def on_release_pyn(self, key):
         try:
             print("on release pyn:", key)  
-            lookup = str(key).lower()
+            lookup = key.char.lower()
         except AttributeError:
              lookup = key    
         if lookup in self.pressed_keys:

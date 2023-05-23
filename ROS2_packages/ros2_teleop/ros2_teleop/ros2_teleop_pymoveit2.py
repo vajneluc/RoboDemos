@@ -16,9 +16,6 @@ from pymoveit2.robots import panda
 from keyboard_msgs.msg import KeyboardState
 
 
-settings = termios.tcgetattr(sys.stdin)
-
-
 class ServoClientNode(Node):
 
     def __init__(self):
