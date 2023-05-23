@@ -49,8 +49,8 @@ class MeshcatVisualizerNode(Node):
             self.last_dummy = DummyControlDebug()
   
         # Load URDF model
-        self.mesh_dir = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"
-        self.urdf_model_path = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda.urdf"
+        self.mesh_dir = "/home/julius/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"
+        self.urdf_model_path = "/home/julius/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda.urdf"
         
         # Build from URDF
         self.model, self.collision_model, self.visual_model = pin.buildModelsFromUrdf(

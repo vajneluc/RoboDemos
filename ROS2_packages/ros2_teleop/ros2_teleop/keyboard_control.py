@@ -13,7 +13,6 @@ from pynput import keyboard
 from pynput.keyboard import Key
 from sshkeyboard import listen_keyboard
 
-import sys, select, termios, tty
 
 
 class KeyboardControlNode(Node):
