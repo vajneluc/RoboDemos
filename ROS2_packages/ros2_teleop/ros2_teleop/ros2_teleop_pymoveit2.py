@@ -146,15 +146,15 @@ class ServoClientNode(Node):
             # Keyboard speed settings
             # Linear speed
             if k.key_r:
-                self.linear_speed *= coefficients[0]
-            elif k.key_f:
                 self.linear_speed *= coefficients[1]
+            elif k.key_f:
+                self.linear_speed *= coefficients[0]
             
             # Angular speed
             if k.key_y:
-                self.angular_speed *= coefficients[0]
-            elif k.key_h:
                 self.angular_speed *= coefficients[1]
+            elif k.key_h:
+                self.angular_speed *= coefficients[0]
 
             # Keyboard bindings
             # twist.linear
