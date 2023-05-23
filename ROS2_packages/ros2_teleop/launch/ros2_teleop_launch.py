@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -34,7 +34,8 @@ def generate_launch_description():
             package='ros2_teleop',
             executable='keyboard_control',
             name='keyboard_control',
-            parameters=[{'use_pynput':use_pynput}]
+            prefix='xterm -e',
+            parameters=[{'use_pynput': use_pynput}]
             ),
         # Node controlling controller inputs
         Node(
@@ -47,7 +48,8 @@ def generate_launch_description():
         Node(
             package='ros2_teleop',
             executable='ros2_teleop_pymoveit2',
-            name='ros2_teleop_pymoveit2'
+            name='ros2_teleop_pymoveit2',
+            parameters=[{'start_joy': start_joy}]
         ),
         # Node visualizing in meshcat
         Node(

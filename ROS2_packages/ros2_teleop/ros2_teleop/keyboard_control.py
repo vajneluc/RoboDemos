@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 import rclpy
-import time
-from rclpy.qos import (
-    QoSDurabilityPolicy,
-    QoSHistoryPolicy,
-    QoSProfile,
-    QoSReliabilityPolicy,
-)
 from rclpy.node import Node
 from keyboard_msgs.msg import KeyboardState
 from pynput import keyboard
@@ -19,13 +12,14 @@ class KeyboardControlNode(Node):
 
     def __init__(self):
         
-        
-        # Create teleop twist keyboard
+        # Create Keyboard Control Node
         super().__init__('keyboard_control')
 
+        # Declare launch parameter to use pynput(Linux) or sshkeyboard(works with WSL2)
         self.declare_parameter('use_pynput', True)
         use_pynput = self.get_parameter('use_pynput').get_parameter_value().bool_value
-        print(use_pynput)
+
+        # Registered keys for both keyboards
         self.pressed_keys = {
             "q" : False,
             "w" : False,
@@ -45,6 +39,7 @@ class KeyboardControlNode(Node):
             "h" : False,
         }
 
+        # Create keyboard_msgs publisher
         self.publisher = self.create_publisher(
             KeyboardState,
             "keyboard_msgs",
@@ -63,7 +58,7 @@ class KeyboardControlNode(Node):
             listen_keyboard(on_press=lambda key: self.on_press(key), 
                             on_release=lambda key: self.on_release(key))
 
-    # Callback functions for sshkeyboard:
+    # Callback functions for sshkeyboard on press
     def on_press(self, key):
         print("on press:", key)
         lookup = key.lower()
@@ -71,6 +66,7 @@ class KeyboardControlNode(Node):
             self.pressed_keys[lookup]=True
             self.send_keyboard_state()
     
+    # Callback functions for sshkeyboard on release
     def on_release(self, key):
         print("on release:", key)
         lookup = key.lower()
@@ -78,7 +74,7 @@ class KeyboardControlNode(Node):
             self.pressed_keys[lookup]=False
             self.send_keyboard_state()
     
-    # Callback functions for pynput keyboard
+    # Callback functions for pynput keyboard on press
     def on_press_pyn(self, key):
         try:
             print("on press pyn:", key)
@@ -90,6 +86,7 @@ class KeyboardControlNode(Node):
             self.pressed_keys[lookup]=True
             self.send_keyboard_state()
     
+    # Callback functions for pynput keyboard on release
     def on_release_pyn(self, key):
         try:
             print("on release pyn:", key)  
@@ -101,6 +98,7 @@ class KeyboardControlNode(Node):
             self.pressed_keys[lookup]=False
             self.send_keyboard_state()
     
+    # Function publishing keyboard_msg
     def send_keyboard_state(self):
         msg = KeyboardState()
         msg.key_q = self.pressed_keys["q"]
@@ -119,17 +117,12 @@ class KeyboardControlNode(Node):
         msg.key_l = self.pressed_keys["l"]
         msg.key_y = self.pressed_keys["y"]
         msg.key_h = self.pressed_keys["h"]
-
+        # publish the keyboard_msg
         self.publisher.publish(msg) 
-
-    def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg.data)
-    
 
 def main():	
     rclpy.init()
     node = KeyboardControlNode()
-    print("Starting keyboard state publisher")
     rclpy.spin(node)
     rclpy.shutdown()
 

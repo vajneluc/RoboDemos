@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 import rclpy
-import sys, select, termios, tty
-from rclpy.qos import (
-    QoSDurabilityPolicy,
-    QoSHistoryPolicy,
-    QoSProfile,
-    QoSReliabilityPolicy,
-)
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
 from geometry_msgs.msg import TwistStamped
@@ -16,12 +9,12 @@ from pymoveit2.robots import panda
 from keyboard_msgs.msg import KeyboardState
 
 
-class ServoClientNode(Node):
+class TeleopNode(Node):
 
     def __init__(self):
         
         # Create teleop twist keyboard
-        super().__init__('teleop_pymoveit2')
+        super().__init__('teleop_node')
         # Create callback group that allows execution of callbacks in parallel without restrictions
         callback_group = ReentrantCallbackGroup()
 
@@ -214,10 +207,8 @@ class ServoClientNode(Node):
 
 def main():	
     rclpy.init()
-    node = ServoClientNode()
-
+    node = TeleopNode()
     rclpy.spin(node)
-    
     node.destroy_node()
     rclpy.shutdown()
 
