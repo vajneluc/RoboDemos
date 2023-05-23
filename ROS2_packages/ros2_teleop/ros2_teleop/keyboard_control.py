@@ -9,8 +9,8 @@ from rclpy.qos import (
 )
 from rclpy.node import Node
 from keyboard_msgs.msg import KeyboardState
-#from pynput import keyboard
-#from pynput.keyboard import Key
+from pynput import keyboard
+from pynput.keyboard import Key
 from sshkeyboard import listen_keyboard
 
 import sys, select, termios, tty
@@ -19,7 +19,8 @@ settings = termios.tcgetattr(sys.stdin)
 
 class KeyboardControlNode(Node):
 
-    def __init__(self):
+    def __init__(self, use_pynput=True):
+        
         
         # Create teleop twist keyboard
         super().__init__('keyboard_control')
@@ -48,25 +49,68 @@ class KeyboardControlNode(Node):
             "keyboard_msgs",
             10
         )
+        
+        # Keyboard selection
+        self.use_pynput = use_pynput
+        self.keyboard_selection = input("Use pynput? [yes/no].")
+        if self.keyboard_selection == "no":
+              self.use_pynput = False
+        elif self.keyboard_selection == "yes":
+            pass
+        else:
+              print("Input Error. Input yes or no.")
+              quit()
+            
+        if self.use_pynput:
+            print("Using pynput keyboard.")
+            print("Listening to keyboard events...")
+            with keyboard.Listener(on_press=self.on_press_pyn,
+                                   on_release=self.on_release_pyn) as listener:
+                                   listener.join()
+        else:
+            print("Using sshkeyboard.")
+            print("Listening to keyboard events...")
+            listen_keyboard(on_press=lambda key: self.on_press(key), 
+                            on_release=lambda key: self.on_release(key))
 
-    def on_press(key, self):
+    # Callback functions for sshkeyboard:
+    def on_press(self, key):
         print("on press:", key)
         lookup = key.lower()
         if lookup in self.pressed_keys:
             self.pressed_keys[lookup]=True
             self.send_keyboard_state()
     
-    def on_release(key, self):
-        print("on realease:", key)
+    def on_release(self, key):
+        print("on release:", key)
         lookup = key.lower()
         if lookup in self.pressed_keys:
             self.pressed_keys[lookup]=False
             self.send_keyboard_state()
-
-    print("Listening to keyboard events...")
-    listen_keyboard(on_press=on_press, on_release=on_release)
     
-
+    # Callback functions for pynput keyboard
+    def on_press_pyn(self, key):
+        try:
+            print("on press pyn:", key)
+            lookup = key.char.lower()
+        except AttributeError:    
+             lookup = key
+        if lookup in self.pressed_keys:
+            print("lookup found:", lookup)
+            self.pressed_keys[lookup]=True
+            self.send_keyboard_state()
+    
+    def on_release_pyn(self, key):
+        try:
+            print("on release pyn:", key)  
+            lookup = str(key).lower()
+        except AttributeError:
+             lookup = key    
+        if lookup in self.pressed_keys:
+            print("lookup found:", lookup)
+            self.pressed_keys[lookup]=False
+            self.send_keyboard_state()
+    
     def send_keyboard_state(self):
         msg = KeyboardState()
         msg.key_q = self.pressed_keys["q"]
@@ -93,9 +137,7 @@ class KeyboardControlNode(Node):
     
 
 def main():	
-    print("stage 1")
     rclpy.init()
-    print("stage 2")
     node = KeyboardControlNode()
     print("Starting keyboard state publisher")
     rclpy.spin(node)
