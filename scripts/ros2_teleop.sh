@@ -44,7 +44,7 @@ echo "Selected topic : /$topic"
 cd ~/ros2_ws
 if [ $build = "true" ]; then
 	colcon build --packages-select ros2_teleop meshcat_visualizer
-elif [ $pynput = "false" ]: then
+elif [ $pynput = "false" ]; then
 	echo "SSHKeyboard must be launched in a seperate terminal using:"
 	echo "ros2 run ros2_teleop keyboard_control --ros-args -p use_pynput:=false"
 fi
