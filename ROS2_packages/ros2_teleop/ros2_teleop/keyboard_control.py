@@ -73,24 +73,20 @@ class KeyboardControlNode(Node):
     # Callback functions for pynput keyboard on press
     def on_press_pyn(self, key):
         try:
-            print("on press pyn:", key)
             lookup = key.char.lower()
         except AttributeError:
             lookup = key
         if lookup in self.pressed_keys:
-            print("lookup found:", lookup)
             self.pressed_keys[lookup] = True
             self.send_keyboard_state()
 
     # Callback functions for pynput keyboard on release
     def on_release_pyn(self, key):
         try:
-            print("on release pyn:", key)
             lookup = key.char.lower()
         except AttributeError:
             lookup = key
         if lookup in self.pressed_keys:
-            print("lookup found:", lookup)
             self.pressed_keys[lookup] = False
             self.send_keyboard_state()
 

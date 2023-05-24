@@ -6,7 +6,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    launch_msg = f"...PRESS ANY KEY TO CONTINUE...\n\n\nPress h for help"
+    launch_msg = f"...PRESS ENTER TO CONTINUE...\n\n\nType h for help"
     print(launch_msg)
     config = input()
     if config == "h":
@@ -14,18 +14,15 @@ def generate_launch_description():
         FORMAT_ITALIC = "\033[3m"
         FORMAT_UNDERLINE = "\033[4m"
         FORMAT_RESET = "\033[0m"
-        BLACK = "\033[30m"
-        WHITE = "\033[37m"
-        WHITE_BG = "\033[47m"
         RED = "\033[31m"
         GREEN = "\033[32m"
         BLUE = "\033[34m"
         config_msg = (
-            f"{WHITE_BG}{BLACK}{FORMAT_BOLD}{FORMAT_ITALIC}{FORMAT_UNDERLINE}AVAILABLE LAUNCH CONFIGURATIONS :{FORMAT_RESET}\n\n"
+            f"\n\n\n{FORMAT_BOLD}{FORMAT_ITALIC}{FORMAT_UNDERLINE}AVAILABLE LAUNCH CONFIGURATIONS :{FORMAT_RESET}\n\n\n"
             f"{BLUE}start_joy:={FORMAT_RESET}[{GREEN}true{FORMAT_RESET} ({FORMAT_UNDERLINE}default{FORMAT_RESET}) / {RED}false{FORMAT_RESET}]\n"
             f"{BLUE}use_pynput:={FORMAT_RESET}[{GREEN}true{FORMAT_RESET} ({FORMAT_UNDERLINE}default{FORMAT_RESET}) / {RED}false{FORMAT_RESET}]\n"
             f"{BLUE}use_meshcat:={FORMAT_RESET}[{GREEN}true{FORMAT_RESET} / {RED}false{FORMAT_RESET} ({FORMAT_UNDERLINE}default{FORMAT_RESET})]\n"
-            f"{BLUE}topic_source:={FORMAT_RESET}[{GREEN}/my_topic{FORMAT_RESET} ({FORMAT_UNDERLINE}default:{FORMAT_RESET} {GREEN}/joint_states{FORMAT_RESET})]"
+            f"{BLUE}topic_source:={FORMAT_RESET}[{GREEN}/my_topic{FORMAT_RESET} ({FORMAT_UNDERLINE}default:{FORMAT_RESET} {GREEN}/joint_states{FORMAT_RESET})\n\n\n]"
         )
         print(config_msg)
 
