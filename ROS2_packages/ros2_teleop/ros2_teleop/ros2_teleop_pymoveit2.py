@@ -10,54 +10,50 @@ from keyboard_msgs.msg import KeyboardState
 
 
 class TeleopNode(Node):
-
     def __init__(self):
-        
-        # Create teleop twist keyboard
-        super().__init__('teleop_node')
+        # Create Teleop Node
+        super().__init__("teleop_node")
+
+        # Declare launch parameter to start joystick controller (works with XBOX controller in Linux)
+        self.declare_parameter("start_joy", True)
+        start_joy = self.get_parameter("start_joy").get_parameter_value().bool_value
+
         # Create callback group that allows execution of callbacks in parallel without restrictions
         callback_group = ReentrantCallbackGroup()
 
-        # Create MoveIt 2 Servo interface
+        # Create MoveIt2 Servo
         self.moveit2_servo = MoveIt2Servo(
             node=self,
             frame_id=panda.base_link_name(),
             callback_group=callback_group,
         )
-        print("moveit2 servo initialized")
 
-        # Create joystick subscriber
+        # Create /joy subsriber
         self.subscription = self.create_subscription(
-            Joy,
-            '/joy',
-            self.joy_listener_callback,
-            10)
+            Joy, "/joy", self.joy_listener_callback, 10
+        )
         self.subscription  # prevent unused variable warning
-        
-        # Create keyboard subscriber
+
+        # Create /keyboard_msgs subsriber
         self.subscription = self.create_subscription(
-            KeyboardState,
-            '/keyboard_msgs',
-            self.keyboard_listener_callback,
-            10)
+            KeyboardState, "/keyboard_msgs", self.keyboard_listener_callback, 10
+        )
         self.subscription  # prevent unused variable warning
 
         self.last_keyboard = KeyboardState()
         self.last_joystick = Joy()
-        
-        # Default speeds
-        self.linear_speed = 1
-        self.angular_speed = 2
+
+        # Default speed settings
+        self.linear_speed = 2
+        self.angular_speed = 4
 
     def joy_listener_callback(self, msg):
         self.last_joystick = msg
         self.update_command()
-        #self.get_logger().info(f'Joystick: {msg}')
-    
+
     def keyboard_listener_callback(self, msg):
         self.last_keyboard = msg
-        #self.get_logger().info(f'Keyboard: {msg}')
-    
+
     def send_twist(self, Lx, Ly, Lz, Ax, Ay, Az):
         twist_msg = TwistStamped()
         twist = twist_msg.twist
@@ -69,23 +65,27 @@ class TeleopNode(Node):
         twist.angular.x = float(Ax)
         twist.angular.y = float(Ay)
         twist.angular.z = float(Az)
-        self.moveit2_servo(linear=(twist.linear.x, twist.linear.y, twist.linear.z), 
-                           angular=(twist.angular.x, twist.angular.y, twist.angular.z))
-    
+        self.moveit2_servo(
+            linear=(twist.linear.x, twist.linear.y, twist.linear.z),
+            angular=(twist.angular.x, twist.angular.y, twist.angular.z),
+        )
+
     def update_command(self):
         j = self.last_joystick
         k = self.last_keyboard
-        self.get_logger().info(f"\nLinear speed: {round(self.linear_speed, 3)} \nAngular speed: {round(self.angular_speed, 3)}")
+        self.get_logger().info(
+            f"\nLinear speed: {round(self.linear_speed, 3)} \nAngular speed: {round(self.angular_speed, 3)}"
+        )
 
         # Joystick speed settings
         coefficients = [0.9, 1.1]
-        
+
         # Linear speed
         if j.buttons[0]:
             self.linear_speed *= coefficients[0]
         elif j.buttons[3]:
             self.linear_speed *= coefficients[1]
-        
+
         # Angular speed
         if j.buttons[2]:
             self.angular_speed *= coefficients[0]
@@ -99,13 +99,13 @@ class TeleopNode(Node):
         Ax = 0
         Ay = 0
         Az = 0
-        
+
         # Joystick bindings
         # twist.linear
         joy_x = j.axes[4]
         joy_y = j.axes[3]
         joy_z = j.axes[1]
-            
+
         # twist.angular
         joy_ax = j.axes[6]
         joy_ay = j.axes[7]
@@ -128,21 +128,21 @@ class TeleopNode(Node):
 
         # Controler button settings
         # Z Axis turn
-        Ax = - joy_ax * self.angular_speed
+        Ax = -joy_ax * self.angular_speed
         # Y Axis turn
         Ay = joy_ay * self.angular_speed
-        
+
         # If no input from joystick, use keyboard
         if Lx == Ly == Lz == Ax == Ay == Az == 0:
             print("No input from Joystick, using Keyboard!")
-            
+
             # Keyboard speed settings
             # Linear speed
             if k.key_r:
                 self.linear_speed *= coefficients[1]
             elif k.key_f:
                 self.linear_speed *= coefficients[0]
-            
+
             # Angular speed
             if k.key_y:
                 self.angular_speed *= coefficients[1]
@@ -165,19 +165,19 @@ class TeleopNode(Node):
                 key_x = 1
             elif k.key_s:
                 key_x = -1
-            
+
             # Y Axis
             if k.key_a:
                 key_y = 1
             elif k.key_d:
                 key_y = -1
-            
+
             # Z Axis
             if k.key_q:
                 key_z = 1
             elif k.key_e:
                 key_z = -1
-            
+
             # X Axis turn
             if k.key_l:
                 key_ax = 1
@@ -205,12 +205,10 @@ class TeleopNode(Node):
 
         self.send_twist(Lx, Ly, Lz, Ax, Ay, Az)
 
-def main():	
+
+def main():
     rclpy.init()
     node = TeleopNode()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
-
-
-    

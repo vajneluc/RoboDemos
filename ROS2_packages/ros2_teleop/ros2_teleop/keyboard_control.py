@@ -7,97 +7,93 @@ from pynput.keyboard import Key
 from sshkeyboard import listen_keyboard
 
 
-
 class KeyboardControlNode(Node):
-
     def __init__(self):
-        
         # Create Keyboard Control Node
-        super().__init__('keyboard_control')
+        super().__init__("keyboard_control")
 
         # Declare launch parameter to use pynput(Linux) or sshkeyboard(works with WSL2)
-        self.declare_parameter('use_pynput', True)
-        use_pynput = self.get_parameter('use_pynput').get_parameter_value().bool_value
+        self.declare_parameter("use_pynput", True)
+        use_pynput = self.get_parameter("use_pynput").get_parameter_value().bool_value
 
         # Registered keys for both keyboards
         self.pressed_keys = {
-            "q" : False,
-            "w" : False,
-            "e" : False,
-            "a" : False,
-            "s" : False,
-            "d" : False,
-            "r" : False,
-            "f" : False,
-            "u" : False,
-            "i" : False,
-            "o" : False,
-            "j" : False,
-            "k" : False,
-            "l" : False,
-            "y" : False,
-            "h" : False,
+            "q": False,
+            "w": False,
+            "e": False,
+            "a": False,
+            "s": False,
+            "d": False,
+            "r": False,
+            "f": False,
+            "u": False,
+            "i": False,
+            "o": False,
+            "j": False,
+            "k": False,
+            "l": False,
+            "y": False,
+            "h": False,
         }
 
         # Create keyboard_msgs publisher
-        self.publisher = self.create_publisher(
-            KeyboardState,
-            "keyboard_msgs",
-            10
-        )
-            
+        self.publisher = self.create_publisher(KeyboardState, "keyboard_msgs", 10)
+
         if use_pynput:
             print("Using pynput keyboard.")
             print("Listening to keyboard events...")
-            with keyboard.Listener(on_press=self.on_press_pyn,
-                                   on_release=self.on_release_pyn) as listener:
-                                   listener.join()
+            with keyboard.Listener(
+                on_press=self.on_press_pyn, on_release=self.on_release_pyn
+            ) as listener:
+                listener.join()
         else:
             print("Using sshkeyboard.")
             print("Listening to keyboard events...")
-            listen_keyboard(on_press=lambda key: self.on_press(key), 
-                            on_release=lambda key: self.on_release(key))
+            listen_keyboard(
+                on_press=lambda key: self.on_press(key),
+                on_release=lambda key: self.on_release(key),
+            )
 
     # Callback functions for sshkeyboard on press
     def on_press(self, key):
         print("on press:", key)
         lookup = key.lower()
         if lookup in self.pressed_keys:
-            self.pressed_keys[lookup]=True
+            self.pressed_keys[lookup] = True
             self.send_keyboard_state()
-    
+
     # Callback functions for sshkeyboard on release
     def on_release(self, key):
         print("on release:", key)
         lookup = key.lower()
         if lookup in self.pressed_keys:
-            self.pressed_keys[lookup]=False
+            self.pressed_keys[lookup] = False
             self.send_keyboard_state()
-    
+
     # Callback functions for pynput keyboard on press
     def on_press_pyn(self, key):
         try:
             print("on press pyn:", key)
             lookup = key.char.lower()
-        except AttributeError:    
-             lookup = key
+        except AttributeError:
+            lookup = key
         if lookup in self.pressed_keys:
             print("lookup found:", lookup)
-            self.pressed_keys[lookup]=True
+            self.pressed_keys[lookup] = True
             self.send_keyboard_state()
-    
+
     # Callback functions for pynput keyboard on release
     def on_release_pyn(self, key):
         try:
-            print("on release pyn:", key)  
+            print("on release pyn:", key)
             lookup = key.char.lower()
         except AttributeError:
-             lookup = key    
+            lookup = key
         if lookup in self.pressed_keys:
             print("lookup found:", lookup)
-            self.pressed_keys[lookup]=False
+            self.pressed_keys[lookup] = False
             self.send_keyboard_state()
-    
+
     # Function publishing keyboard_msg
     def send_keyboard_state(self):
         msg = KeyboardState()
@@ -118,13 +114,11 @@ class KeyboardControlNode(Node):
         msg.key_y = self.pressed_keys["y"]
         msg.key_h = self.pressed_keys["h"]
         # publish the keyboard_msg
-        self.publisher.publish(msg) 
+        self.publisher.publish(msg)
 
-def main():	
+
+def main():
     rclpy.init()
     node = KeyboardControlNode()
     rclpy.spin(node)
     rclpy.shutdown()
-
-
-    
