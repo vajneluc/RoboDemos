@@ -13,9 +13,7 @@ def generate_launch_description():
     use_meshcat = LaunchConfiguration("use_meshcat") 
     topic_source = LaunchConfiguration("topic_source")
     use_pynput = LaunchConfiguration("use_pynput")
-    if not use_pynput: 
-        help_msg = f"sshkeyboard must be launched in a separate terminal using:\nros2 run ros2_teleop keyboard_control --ros-args -p use_pynput:=false"
-        print(help_msg)
+
     return LaunchDescription(
         [
             # Start joy node when launched
