@@ -13,7 +13,7 @@ class KeyboardControlNode(Node):
         super().__init__("keyboard_control")
 
         # Declare launch parameter to use pynput(Linux) or sshkeyboard(works with WSL2)
-        self.declare_parameter("use_pynput", True)
+        self.declare_parameter("use_pynput", False)
         use_pynput = self.get_parameter("use_pynput").get_parameter_value().bool_value
 
         # Registered keys for both keyboards
