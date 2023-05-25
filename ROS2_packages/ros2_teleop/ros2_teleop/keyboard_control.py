@@ -38,6 +38,7 @@ class KeyboardControlNode(Node):
 
         # Create keyboard_msgs publisher
         self.publisher = self.create_publisher(KeyboardState, "keyboard_msgs", 10)
+        self.timer = self.create_timer(0.01, self.send_keyboard_state)
 
         if use_pynput:
             print("Using pynput keyboard.")

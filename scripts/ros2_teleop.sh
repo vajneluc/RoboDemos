@@ -39,15 +39,13 @@ echo "Using pynput: $pynput"
 echo "Start Meshcat : $meshcat"
 echo "Selected topic : /$topic"
 
+sleep 2
 
 # Launch Configurations
 cd ~/ros2_ws
 if [ $build = "true" ]; then
 	colcon build --packages-select ros2_teleop meshcat_visualizer
-elif [ $pynput = "false" ]; then
-	echo "SSHKeyboard must be launched in a seperate terminal using:"
-	echo "ros2 run ros2_teleop keyboard_control --ros-args -p use_pynput:=false"
-fi
+
 source setenv.sh
 source pinokio.sh
 echo "launching in 3"
@@ -57,3 +55,4 @@ sleep 1
 echo "launching in 1"
 sleep 1
 ros2 launch ros2_teleop ros2_teleop_launch.py start_joy:=$joy use_meshcat:=$meshcat topic_source:=/$topic use_pynut:=$pynput
+
