@@ -60,7 +60,7 @@ class MeshcatVisualizerNode(Node):
             self.model, self.collision_model, self.visual_model
         )
         try:
-            self.viz.initViewer(open=True)
+            self.viz.initViewer(open=False)
         except ImportError as err:
             print(
                 "Error while initializing the viewer. It seems you should install Python meshcat"
