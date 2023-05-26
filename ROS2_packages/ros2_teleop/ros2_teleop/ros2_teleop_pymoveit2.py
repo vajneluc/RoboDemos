@@ -14,7 +14,7 @@ class TeleopNode(Node):
         # Create Teleop Node
         super().__init__("teleop_node")
 
-        # Declare launch parameter to start joystick controller (works with XBOX controller in Linux)
+        # Declare launch parameter to start joystick controller (works with generic controller in Linux)
         self.declare_parameter("start_joy", True)
         self.start_joy = self.get_parameter("start_joy").get_parameter_value().bool_value
 

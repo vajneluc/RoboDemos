@@ -13,6 +13,7 @@ def generate_launch_description():
     use_meshcat = LaunchConfiguration("use_meshcat") 
     topic_source = LaunchConfiguration("topic_source")
     use_pynput = LaunchConfiguration("use_pynput")
+    config_path = LaunchConfiguration("config_path")
 
     return LaunchDescription(
         [
@@ -24,6 +25,8 @@ def generate_launch_description():
             DeclareLaunchArgument(name="topic_source", default_value="/joint_states"),
             # Use pynput keyboard or sshkeyboard
             DeclareLaunchArgument(name="use_pynput", default_value="True"),
+            # Declare path to config
+            DeclareLaunchArgument(name="config_path", default_value=""),
             Node(
                 package="ros2_teleop",
                 executable="keyboard_control",
@@ -52,7 +55,7 @@ def generate_launch_description():
                 executable="meshcat_visualizer_node",
                 name="meshcat_visualizer_node",
                 condition=IfCondition(use_meshcat),
-                parameters=[{"topic_source": topic_source}],
+                parameters=[{"topic_source": topic_source, "config_path": config_path}],
             ),
 
         ]

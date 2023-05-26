@@ -10,6 +10,7 @@ if [ "$#" -eq 0 ]; then
 	echo "-j {true(default)/false}	        # Starts ROS2 Joystick Node"
 	echo "-m {true/false(default)}	        # Starts Meshcat Visualizer"
 	echo "-t {my_topic/joint_states(default)}	# Select topic for Meshcat"
+	echo "-c {config_path}					# Select path to URDF config"
 fi
 
 # Launch arguments
@@ -19,8 +20,9 @@ pynput="true"
 joy="true"
 meshcat="false"
 topic="joint_states"
+config=""
 # Read Launch Config
-while getopts "b:p:j:m:t:" option
+while getopts "b:p:j:m:t:c:" option
 do 
 	case "$option"
 		in
@@ -29,6 +31,7 @@ do
 		j) joy="$OPTARG" ;;
 		m) meshcat="$OPTARG" ;;
 		t) topic="$OPTARG" ;;
+		c) config="$OPTARG" ;;
 	esac
 done
 
@@ -43,7 +46,8 @@ echo "Build package : $build"
 echo "Start Joystick : $joy"
 echo "Using pynput: $pynput"
 echo "Start Meshcat : $meshcat"
-echo "Selected topic : /$topic"
+echo "Selected topic : $topic"
+echo "Config path : $config"
 
 source setenv.sh
 source pinokio.sh
@@ -59,6 +63,9 @@ printf "\n\n\n"
 echo "Meshcat Visualizer: http://127.0.0.1:7000/static/"
 printf "\n\n\n"
 
-ros2 launch ros2_teleop ros2_teleop_launch.py start_joy:=$joy use_meshcat:=$meshcat topic_source:=/$topic use_pynut:=$pynput
-
+if [ "$config" = "" ]; then
+	ros2 launch ros2_teleop ros2_teleop_launch.py start_joy:=$joy use_meshcat:=$meshcat topic_source:=$topic use_pynut:=$pynput 
+else
+	ros2 launch ros2_teleop ros2_teleop_launch.py start_joy:=$joy use_meshcat:=$meshcat topic_source:=$topic use_pynut:=$pynput config_path:=$config
+fi
 

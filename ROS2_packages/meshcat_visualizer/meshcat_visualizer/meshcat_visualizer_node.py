@@ -5,7 +5,7 @@ import rclpy
 from rclpy.node import Node
 from dummy_control_msgs.msg import DummyControlDebug
 from sensor_msgs.msg import JointState
-
+import yaml 
 
 # pinocchio API:
 # https://gepettoweb.laas.fr/doc/stack-of-tasks/pinocchio/master/doxygen-html/md_doc_b-examples_display_b-meshcat-viewer.html
@@ -18,6 +18,7 @@ import meshcat.geometry as g
 import meshcat.transformations as tf
 
 
+
 class MeshcatVisualizerNode(Node):
     def __init__(self):
         super().__init__("meshcat_visualizer")
@@ -27,6 +28,20 @@ class MeshcatVisualizerNode(Node):
         topic_source = (
             self.get_parameter("topic_source").get_parameter_value().string_value
         )
+        self.declare_parameter("config_path", "")
+        config_path = (
+            self.get_parameter("config_path").get_parameter_value().string_value
+        )
+        
+        try:
+            self.get_logger().info(f"Loading config from: {config_path}")
+            with open(config_path, "r", encoding="utf-8") as infile:
+                self.config = yaml.safe_load(infile)
+            self.get_logger().info("Config loaded successfuly!")
+        except Exception as err:
+            self.get_logger().error("Config loading failed!")
+            sys.exit(0)
+
 
         if topic_source == "/my_topic":
             # Create /my_topic subscriber
@@ -47,8 +62,8 @@ class MeshcatVisualizerNode(Node):
             self.last_joint = JointState()
 
         # Load URDF model
-        self.mesh_dir = f"/home/julius/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"
-        self.urdf_model_path = "/home/julius/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda.urdf"
+        self.mesh_dir = self.config["mesh_dir"]
+        self.urdf_model_path = self.config["urdf_model_path"]
 
         # Build from URDF
         self.model, self.collision_model, self.visual_model = pin.buildModelsFromUrdf(
