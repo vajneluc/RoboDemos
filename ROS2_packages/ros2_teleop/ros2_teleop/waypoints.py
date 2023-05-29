@@ -60,7 +60,7 @@ class WaypointNode(Node):
         self.waypoint_count = 0
 
     def joint_listener_callback(self, msg):
-        pass
+        self.last_joint = msg
     
     def save_waypoint(self):
         k = self.last_keyboard
@@ -69,13 +69,14 @@ class WaypointNode(Node):
         positions = msg.position
         out = []
         for name, pos in zip(names, positions):
-            if "panda_joint" in name:
-                out.append((name, pos))
+            out.append((name, float(pos)))
         out.sort(key=lambda x: x[0])
-        out_positions = [np[1] for np in out]
-        data = [f"Waypoint {self.waypoint_count}", f"Positions {out_positions}"]
+        out_positions = [p[1] for p in out]
+        
+        data = [f"Waypoint {self.waypoint_count}: {out_positions}"]
         if k.key_n:
-                with open("/home/julius/devel/RoboDemos/ROS2_packages/ros2_teleop/ros2_teleop/waypoints.csv", "w", newline=",") as file:
+                self.get_logger().info(f"Saving Waypoint{self.waypoint_count}")
+                with open("/home/julius/devel/RoboDemos/ROS2_packages/ros2_teleop/ros2_teleop/waypoints.csv", "a", newline="") as file:
                     writer = csv.writer(file)
                     writer.writerow(data)
                     self.waypoint_count += 1
@@ -174,7 +175,7 @@ class WaypointNode(Node):
 
             # If no input from joystick, use keyboard
             if Lx == Ly == Lz == Ax == Ay == Az == 0:
-                print("No input from Joystick, using Keyboard!")
+                self.get_logger().info("No input from Joystick, using Keyboard!")
 
                 # Keyboard speed settings
                 # Linear speed
@@ -246,6 +247,7 @@ class WaypointNode(Node):
             self.send_twist(Lx, Ly, Lz, Ax, Ay, Az)
         
         elif not self.start_joy:
+            self.get_logger().info("Listening to keyboard")
             # Keyboard speed settings
             # Linear speed
             if k.key_r:
