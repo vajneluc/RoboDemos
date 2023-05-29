@@ -25,7 +25,8 @@ setup(
     entry_points={
         'console_scripts': [
             'ros2_teleop_pymoveit2 = ros2_teleop.ros2_teleop_pymoveit2:main',
-            'keyboard_control = ros2_teleop.keyboard_control:main'
+            'keyboard_control = ros2_teleop.keyboard_control:main',
+            'waypoints = ros2_teleop.waypoints:main '
      ],
     },
 )

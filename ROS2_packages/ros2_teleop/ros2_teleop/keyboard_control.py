@@ -34,6 +34,8 @@ class KeyboardControlNode(Node):
             "l": False,
             "y": False,
             "h": False,
+            "n": False,
+            "c": False,
         }
 
         # Create keyboard_msgs publisher
@@ -110,6 +112,8 @@ class KeyboardControlNode(Node):
         msg.key_l = self.pressed_keys["l"]
         msg.key_y = self.pressed_keys["y"]
         msg.key_h = self.pressed_keys["h"]
+        msg.key_n = self.pressed_keys["n"]
+        msg.key_c = self.pressed_keys["c"]
         # publish the keyboard_msg
         self.publisher.publish(msg)
 

@@ -45,8 +45,8 @@ def generate_launch_description():
             # Node sending twist commands
             Node(
                 package="ros2_teleop",
-                executable="ros2_teleop_pymoveit2",
-                name="ros2_teleop_pymoveit2",
+                executable="waypoints",
+                name="waypoints",
                 parameters=[{"start_joy": start_joy}],
             ),
             # Node visualizing in meshcat
