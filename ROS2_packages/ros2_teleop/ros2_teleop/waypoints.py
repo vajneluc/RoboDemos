@@ -8,6 +8,7 @@ from pymoveit2 import MoveIt2Servo
 from pymoveit2.robots import panda
 from keyboard_msgs.msg import KeyboardState
 from sensor_msgs.msg import JointState
+from builtin_interfaces.msg import Time
 import csv
 
 class WaypointNode(Node):
@@ -58,28 +59,51 @@ class WaypointNode(Node):
             self.last_joystick = Joy()
 
         self.waypoint_count = 0
+        self.continuos_enabled = False
 
     def joint_listener_callback(self, msg):
         self.last_joint = msg
-    
+        self.save_waypoints_continuos()
+
     def save_waypoint(self):
         k = self.last_keyboard
-        msg = self.last_joint
-        names = msg.name
-        positions = msg.position
-        out = []
-        for name, pos in zip(names, positions):
-            out.append((name, float(pos)))
-        out.sort(key=lambda x: x[0])
-        out_positions = [p[1] for p in out]
-        
-        data = [f"Waypoint {self.waypoint_count}: {out_positions}"]
         if k.key_n:
-                self.get_logger().info(f"Saving Waypoint{self.waypoint_count}")
-                with open("/home/julius/devel/RoboDemos/ROS2_packages/ros2_teleop/ros2_teleop/waypoints.csv", "a", newline="") as file:
-                    writer = csv.writer(file)
-                    writer.writerow(data)
-                    self.waypoint_count += 1
+            msg = self.last_joint
+            names = msg.name
+            positions = msg.position
+            out = []
+            for name, pos in zip(names, positions):
+                out.append((name, float(pos)))
+            out.sort(key=lambda x: x[0])
+            out_positions = [p[1] for p in out]       
+            data = [f"Waypoint {self.waypoint_count}: {out_positions}"]
+            self.get_logger().info(f"Saving Waypoint{self.waypoint_count}")
+            with open("/home/julius/devel/RoboDemos/ROS2_packages/ros2_teleop/ros2_teleop/waypoints.csv", "a", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(data)
+                self.waypoint_count += 1
+    
+    def save_waypoints_continuos(self):
+        k = self.last_keyboard
+        if k.key_c:
+            self.continuos_enabled = not self.continuos_enabled
+            self.get_logger().info(f"continues_enabled = {self.continuos_enabled}.")
+        elif self.continuos_enabled:
+            self.get_logger().info(f"Started continous waypoint recording. Press C to stop.")
+            msg = self.last_joint
+            names = msg.name
+            positions = msg.position
+            time_sec = msg.header.stamp.sec
+            time_nanosec = msg.header.stamp.nanosec
+            out = []
+            for name, pos in zip(names, positions):
+                out.append((name, float(pos)))
+            out.sort(key=lambda x: x[1])
+            out_positions = [p[1] for p in out]       
+            data = [f"sec:{time_sec}nanosec:{time_nanosec}positions{out_positions}"]
+            with open("/home/julius/devel/RoboDemos/ROS2_packages/ros2_teleop/ros2_teleop/traces.csv", "a", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(data)
 
     def joy_listener_callback(self, msg):
         if self.start_joy:
@@ -91,6 +115,7 @@ class WaypointNode(Node):
             self.last_keyboard = msg         
             self.update_command()
             self.save_waypoint()
+            
 
     def send_twist(self, Lx, Ly, Lz, Ax, Ay, Az):
         twist_msg = TwistStamped()

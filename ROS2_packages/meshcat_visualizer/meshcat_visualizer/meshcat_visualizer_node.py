@@ -5,6 +5,7 @@ import rclpy
 from rclpy.node import Node
 from dummy_control_msgs.msg import DummyControlDebug
 from sensor_msgs.msg import JointState
+from builtin_interfaces.msg import Time
 import yaml 
 
 # pinocchio API:
