@@ -76,7 +76,7 @@ class WaypointNode(Node):
                 out.append((name, float(pos)))
             out.sort(key=lambda x: x[0])
             out_positions = [p[1] for p in out]       
-            data = [f"Waypoint {self.waypoint_count}: {out_positions}"]
+            data = [f"Waypoint {self.waypoint_count}", f"Positions: {out_positions}"]
             self.get_logger().info(f"Saving Waypoint{self.waypoint_count}")
             with open("/home/julius/devel/RoboDemos/ROS2_packages/ros2_teleop/ros2_teleop/waypoints.csv", "a", newline="") as file:
                 writer = csv.writer(file)
@@ -100,7 +100,7 @@ class WaypointNode(Node):
                 out.append((name, float(pos)))
             out.sort(key=lambda x: x[1])
             out_positions = [p[1] for p in out]       
-            data = [f"sec:{time_sec}nanosec:{time_nanosec}positions{out_positions}"]
+            data = [f"Time: {time_sec}sec {time_nanosec}nanosec", f"Positions: {out_positions}"]
             with open("/home/julius/devel/RoboDemos/ROS2_packages/ros2_teleop/ros2_teleop/traces.csv", "a", newline="") as file:
                 writer = csv.writer(file)
                 writer.writerow(data)
