@@ -43,15 +43,14 @@ class KeyboardControlNode(Node):
         self.timer = self.create_timer(0.01, self.send_keyboard_state)
 
         if use_pynput:
-            print("Using pynput keyboard.")
-            print("Listening to keyboard events...")
+            self.get_logger().info("Using Pynput keyboard.")
+
             with keyboard.Listener(
                 on_press=self.on_press_pyn, on_release=self.on_release_pyn
             ) as listener:
                 listener.join()
         else:
-            print("Using sshkeyboard.")
-            print("Listening to keyboard events...")
+            self.get_logger().info("Using Sshkeyboard")
             listen_keyboard(
                 on_press=lambda key: self.on_press(key),
                 on_release=lambda key: self.on_release(key),
@@ -59,7 +58,6 @@ class KeyboardControlNode(Node):
 
     # Callback functions for sshkeyboard on press
     def on_press(self, key):
-        print("on press:", key)
         lookup = key.lower()
         if lookup in self.pressed_keys:
             self.pressed_keys[lookup] = True
@@ -67,7 +65,6 @@ class KeyboardControlNode(Node):
 
     # Callback functions for sshkeyboard on release
     def on_release(self, key):
-        print("on release:", key)
         lookup = key.lower()
         if lookup in self.pressed_keys:
             self.pressed_keys[lookup] = False

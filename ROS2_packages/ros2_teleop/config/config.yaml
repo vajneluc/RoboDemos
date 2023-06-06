@@ -1,2 +1,6 @@
-mesh_dir : "/home/julius/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"
-urdf_model_path : "/home/julius/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda.urdf"
+# MeshCat Visualizer
+mesh_dir : "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"
+urdf_model_path : "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda.urdf"
+# Waypoints Node
+waypoints_dir : "/home/ros/dumps/waypoints.csv"
+traces_dir_tmpl : "/home/ros/dumps/traces_{number}.csv"

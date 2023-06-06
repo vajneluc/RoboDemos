@@ -47,7 +47,7 @@ def generate_launch_description():
                 package="ros2_teleop",
                 executable="waypoints",
                 name="waypoints",
-                parameters=[{"start_joy": start_joy}],
+                parameters=[{"start_joy": start_joy, "config_path": config_path}],
             ),
             # Node visualizing in meshcat
             Node(
