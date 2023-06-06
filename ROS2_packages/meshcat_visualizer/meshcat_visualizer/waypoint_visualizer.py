@@ -51,8 +51,11 @@ class MeshcatVisualizerNode(Node):
             self.subscription  # prevent unused variable warning
             # Call subsriber
             self.last_dummy = DummyControlDebug()
-        
-        else:
+        elif topic_source == "waypoints.csv":
+            self.csv = topic_source
+        elif topic_source == "traces.csv":
+            self.csv = topic_source
+        else:   
             # Create /joint_states subscriber
             self.subscription = self.create_subscription(
                 JointState, "/joint_states", self.joint_listener_callback, 10
