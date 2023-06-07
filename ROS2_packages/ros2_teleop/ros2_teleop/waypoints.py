@@ -104,50 +104,6 @@ class WaypointNode(Node):
 
     def joint_listener_callback(self, msg):
         self.last_joint = msg
-<<<<<<< HEAD
-=======
-        self.save_waypoints_continuos()
-
-    def save_waypoint(self):
-        k = self.last_keyboard
-        if k.key_n:
-            msg = self.last_joint
-            names = msg.name
-            positions = msg.position
-            out = []
-            for name, pos in zip(names, positions):
-                out.append((name, float(pos)))
-            out.sort(key=lambda x: x[0])
-            out_positions = [p[1] for p in out]       
-            data = [f"Waypoint {self.waypoint_count}", f"Positions: {out_positions}"]
-            self.get_logger().info(f"Saving Waypoint{self.waypoint_count}")
-            with open("/home/julius/devel/RoboDemos/ROS2_packages/ros2_teleop/ros2_teleop/waypoints.csv", "a", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(data)
-                self.waypoint_count += 1
-    
-    def save_waypoints_continuos(self):
-        k = self.last_keyboard
-        if k.key_c:
-            self.continuos_enabled = not self.continuos_enabled
-            self.get_logger().info(f"continues_enabled = {self.continuos_enabled}.")
-        elif self.continuos_enabled:
-            self.get_logger().info(f"Started continous waypoint recording. Press C to stop.")
-            msg = self.last_joint
-            names = msg.name
-            positions = msg.position
-            time_sec = msg.header.stamp.sec
-            time_nanosec = msg.header.stamp.nanosec
-            out = []
-            for name, pos in zip(names, positions):
-                out.append((name, float(pos)))
-            out.sort(key=lambda x: x[1])
-            out_positions = [p[1] for p in out]       
-            data = [f"Time: {time_sec}sec {time_nanosec}nanosec", f"Positions: {out_positions}"]
-            with open("/home/julius/devel/RoboDemos/ROS2_packages/ros2_teleop/ros2_teleop/traces.csv", "a", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(data)
->>>>>>> 5d56c7421ba0afef3f350afdf12af1366a1ff453
 
     def joy_listener_callback(self, msg):
         self.last_joystick = msg
