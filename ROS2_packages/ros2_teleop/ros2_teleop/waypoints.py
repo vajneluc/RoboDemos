@@ -2,10 +2,10 @@
 import sys
 import yaml
 from pathlib import Path
-import time
 import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.clock import Clock
 from geometry_msgs.msg import TwistStamped
 from sensor_msgs.msg import Joy
 from pymoveit2 import MoveIt2Servo
@@ -87,9 +87,11 @@ class WaypointNode(Node):
         # Saving waypoints and traces
         self.waypoint_count = 0
         self.save_waypoint = False
+        self.last_waypoint_time = None
         self.traces_count = 0
         self.save_traces = False
         self.saving_traces_enabled = False
+        self.last_traces_time = None
         self.table_header = None
         self.waypoints_path = self.config["waypoints_dir"] # edit config file to change
         self.traces_path_tmpl = self.config["traces_dir_tmpl"] # edit config file to change
@@ -144,7 +146,6 @@ class WaypointNode(Node):
         
         self.get_logger().info(f"Waypoint{self.waypoint_count} Saved!")
         self.waypoint_count += 1
-        time.sleep(0.5)
         self.save_waypoint = False
 
     # Function for saving traces to CSV
@@ -169,7 +170,7 @@ class WaypointNode(Node):
             datarow = [time_ns] + [data[n] for n in header[1:]]
             outfile.write(",".join([str(d) for d in datarow]) + "\n")
 
-        self.get_logger().info("Saving Traces. Press C or L1 to Stop.")
+        self.get_logger().info(f"Saving Traces{self.traces_count}. Press C or L1 to Stop.")
 
     # Function sending twist command
     def send_twist(self, Lx, Ly, Lz, Ax, Ay, Az):
@@ -255,11 +256,22 @@ class WaypointNode(Node):
 
         # Waypoint Saving binding
         if k.key_n:
-            self.save_waypoint = True
+
+            current_time_waypoint = self.get_clock().now()
+            
+            if self.last_waypoint_time is None or (self.last_waypoint_time is not None and (current_time_waypoint - self.last_waypoint_time).nanoseconds >= 1e9):
+                self.last_waypoint_time = current_time_waypoint
+                self.save_waypoint = True
+
         
         # Traces Saving Enable/Disable binding
         if k.key_c:
-            self.save_traces = not self.save_traces
+            
+            current_time_traces = self.get_clock().now()
+            
+            if self.last_traces_time is None or (self.last_traces_time is not None and (current_time_traces - self.last_traces_time).nanoseconds >= 1e9):
+                self.last_traces_time = current_time_traces
+                self.save_traces = True
 
         return Lx, Ly, Lz, Ax, Ay, Az
         
@@ -325,11 +337,21 @@ class WaypointNode(Node):
 
         # Waypoint Saving binding
         if j.buttons[5]:
-            self.save_waypoint = True
+
+            current_time_waypoint = self.get_clock().now() 
+
+            if self.last_waypoint_time is None or (self.last_waypoint_time is not None and (current_time_waypoint - self.last_waypoint_time).nanoseconds >= 1e9):
+                self.last_waypoint_time = current_time_waypoint
+                self.save_waypoint = True
         
         # Traces Saving Enable/Disable binding
         if j.buttons[4]:
-            self.save_traces = not self.save_traces
+
+            current_time_traces = self.get_clock().now()
+            
+            if self.last_traces_time is None or (self.last_traces_time is not None and (current_time_traces - self.last_traces_time).nanoseconds >= 1e9):
+                self.last_traces_time = current_time_traces
+                self.save_traces = True
 
         return Lx, Ly, Lz, Ax, Ay, Az
 
@@ -350,8 +372,15 @@ class WaypointNode(Node):
         if self.save_waypoint:
             self.waypoint()
         
-        # Saving Traces
+        # Enable saving traces
         if self.save_traces:
+            self.saving_traces_enabled = not self.saving_traces_enabled
+            self.save_traces = False
+            if not self.saving_traces_enabled:
+                self.traces_count += 1
+        
+        # Save traces
+        if self.saving_traces_enabled:
             self.traces()
 
 
