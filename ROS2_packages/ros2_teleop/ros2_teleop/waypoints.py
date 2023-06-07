@@ -170,7 +170,15 @@ class WaypointNode(Node):
             datarow = [time_ns] + [data[n] for n in header[1:]]
             outfile.write(",".join([str(d) for d in datarow]) + "\n")
 
-        self.get_logger().info(f"Saving Traces{self.traces_count}. Press C or L1 to Stop.")
+        self.get_logger().info(f"Recording Traces{self.traces_count}. Press C or L1 to Stop.")
+
+    # Function for toggling saving traces
+    def traces_toggle(self):
+        self.saving_traces_enabled = not self.saving_traces_enabled
+        self.save_traces = False
+        if not self.saving_traces_enabled:
+            self.get_logger().info(f"Recording Traces{self.traces_count} Stoped")
+            self.traces_count += 1
 
     # Function sending twist command
     def send_twist(self, Lx, Ly, Lz, Ax, Ay, Az):
@@ -274,7 +282,8 @@ class WaypointNode(Node):
                 self.save_traces = True
 
         return Lx, Ly, Lz, Ax, Ay, Az
-        
+
+      
     # Function returning twist vector calculated from joystick inputs
     def joystick_update(self):
         
@@ -354,16 +363,21 @@ class WaypointNode(Node):
                 self.save_traces = True
 
         return Lx, Ly, Lz, Ax, Ay, Az
-
+    
     def update_command(self):            
         
         # Check Joystick for parameters
-        twist_params = self.joystick_update()
+        try:
+            twist_params = self.joystick_update()
+            
+            # If there is no input from Joystick take input from Keyboard
+            if is_zero_twist(*twist_params):
+                twist_params =  self.keyboard_update()
         
-        # If there is no input from Joystick take input from keyboard
-        if is_zero_twist(*twist_params):
-            twist_params =  self.keyboard_update()
-        
+        # This is used when Joy is not launched
+        except:
+            twist_params = self.keyboard_update()
+              
         # If some input was recorded, send the twist command
         if not is_zero_twist(*twist_params):
             self.send_twist(*twist_params)
@@ -372,13 +386,10 @@ class WaypointNode(Node):
         if self.save_waypoint:
             self.waypoint()
         
-        # Enable saving traces
+        # Enable saving traces (toggle)
         if self.save_traces:
-            self.saving_traces_enabled = not self.saving_traces_enabled
-            self.save_traces = False
-            if not self.saving_traces_enabled:
-                self.traces_count += 1
-        
+            self.traces_toggle()
+                       
         # Save traces
         if self.saving_traces_enabled:
             self.traces()
