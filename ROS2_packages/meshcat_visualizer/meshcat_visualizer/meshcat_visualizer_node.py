@@ -16,6 +16,7 @@ from pinocchio.visualize import MeshcatVisualizer
 import meshcat
 import meshcat.geometry as g
 import meshcat.transformations as tf
+import meshcat_shapes
 
 
 
@@ -101,6 +102,12 @@ class MeshcatVisualizerNode(Node):
             if "panda_joint" in joint_name:
                 self.create_axes(joint_name)
         self.create_axes("ee")
+        
+        # Init EE coords
+        self.ee_coord = None
+        #self.viz.viewer["AXES"]["ee"]["coord"].set_object(g.Box([1, 1, 2]),g.MeshPhongMaterial(map=g.TextTexture(f"{self.ee_coord}")))
+        #self.viz.viewer.set_object(g.SceneText(f'{self.ee_coord}',font_size=100))
+        
 
     # Callback function for /mytopic
     def dummy_listener_callback(self, msg):
@@ -134,7 +141,7 @@ class MeshcatVisualizerNode(Node):
         axes_translation = tf.translation_matrix([0, -AXIS_HEIGHT / 2, 0])
 
         # Center point
-        self.viz.viewer["AXES"][joint_name]["EE"].set_object(
+        self.viz.viewer["AXES"][joint_name]["CENTER"].set_object(
             g.Sphere(CENTER_POINT_RADIUS),
             g.MeshLambertMaterial(color=0x000000, reflectivity=0.8),
         )
@@ -162,24 +169,39 @@ class MeshcatVisualizerNode(Node):
 
     # Function for displaying panda joint axes
     def display_joint_axes(self):
-        # Pair joit name with oMi data
-        for joint_name, oMi in zip(self.model.names, self.viz.data.oMi):
+        
+        # Pair joit name with oMf data
+        for joint_name, oMf in zip(self.model.names, self.viz.data.oMf):
             if "panda_joint" in joint_name:
-                placement = oMi
+                placement = oMf
                 # Calculate matrixes
                 t_matrix = tf.translation_matrix(placement.translation)
                 r_matrix = placement.rotation
                 t_matrix[0:3, 0:3] = r_matrix
+                
                 # Update Axes position
                 self.viz.viewer["AXES"][joint_name].set_transform(t_matrix)
+
+        # Find ee index in oMf
+        ee_indx = self.model.getFrameId("panda_link8")
         # Display ee axis
-        placement = self.viz.data.oMi[9]  # < ---(9)
+        placement = self.viz.data.oMf[ee_indx]  # < ---(9) this index works for oMi
+
         # Calculate matrixes
-        t_matrix = tf.translation_matrix(placement.translation)
-        r_matrix = placement.rotation
-        t_matrix[0:3, 0:3] = r_matrix
+        t_matrix = tf.translation_matrix(placement.translation + np.array([0, -0.2, 0]))
+        
+        
         # Update ee position
-        self.viz.viewer["AXES"]["ee"].set_transform(t_matrix)
+        ee_x_coord = round(placement.translation[0], 3)
+        ee_y_coord = round(placement.translation[1], 3)
+        ee_z_coord = round(placement.translation[2], 3)
+        
+        meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coords"], f"X = {ee_x_coord} Y = {ee_y_coord} Z = {ee_z_coord}", font_size=10)
+        self.viz.viewer["AXES"]["ee"]["ee_coords"].set_transform(t_matrix)
+
+        # EE coord
+        
+        #meshcat_shapes.textarea(self.viz.viewer["EE"], f"{self.viz.data.oMi[9]}")
 
     def link_axes(self):
         # Not implemented
