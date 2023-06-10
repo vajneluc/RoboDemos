@@ -98,7 +98,7 @@ class MeshcatVisualizerNode(Node):
         self.viz.displayVisuals(DISPLAY_VISUALS)
 
         # Init Axes X Y Z for all joints
-        for joint_name in self.model.names:
+        for joint_name in self.model.names:  
             if "panda_joint" in joint_name:
                 self.create_axes(joint_name)
         self.create_axes("ee")
@@ -171,9 +171,10 @@ class MeshcatVisualizerNode(Node):
     def display_joint_axes(self):
         
         # Pair joit name with oMf data
-        for joint_name, oMf in zip(self.model.names, self.viz.data.oMf):
+        for joint_name in self.model.names:
             if "panda_joint" in joint_name:
-                placement = oMf
+                joint_indx = self.model.getFrameId(joint_name)
+                placement = self.viz.data.oMf[joint_indx]
                 # Calculate matrixes
                 t_matrix = tf.translation_matrix(placement.translation)
                 r_matrix = placement.rotation
@@ -181,23 +182,27 @@ class MeshcatVisualizerNode(Node):
                 
                 # Update Axes position
                 self.viz.viewer["AXES"][joint_name].set_transform(t_matrix)
-
+      
         # Find ee index in oMf
         ee_indx = self.model.getFrameId("panda_link8")
         # Display ee axis
         placement = self.viz.data.oMf[ee_indx]  # < ---(9) this index works for oMi
 
         # Calculate matrixes
-        t_matrix = tf.translation_matrix(placement.translation + np.array([0, -0.2, 0]))
-        
-        
+        t_matrix_x = tf.translation_matrix(placement.translation + np.array([0, -0.2, 0]))
+        t_matrix_y = tf.translation_matrix(placement.translation + np.array([0, -0.25, 0]))
+        t_matrix_z = tf.translation_matrix(placement.translation + np.array([0, -0.3, 0]))
         # Update ee position
         ee_x_coord = round(placement.translation[0], 3)
         ee_y_coord = round(placement.translation[1], 3)
         ee_z_coord = round(placement.translation[2], 3)
         
-        meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coords"], f"X = {ee_x_coord} Y = {ee_y_coord} Z = {ee_z_coord}", font_size=10)
-        self.viz.viewer["AXES"]["ee"]["ee_coords"].set_transform(t_matrix)
+        meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coord_x"], f"X = {ee_x_coord}", font_size=10)
+        meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coord_y"], f"Y = {ee_y_coord}", font_size=10)
+        meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coord_z"], f"Z = {ee_z_coord}", font_size=10)
+        self.viz.viewer["AXES"]["ee"]["ee_coord_x"].set_transform(t_matrix_x)
+        self.viz.viewer["AXES"]["ee"]["ee_coord_y"].set_transform(t_matrix_y)
+        self.viz.viewer["AXES"]["ee"]["ee_coord_z"].set_transform(t_matrix_z)
 
         # EE coord
         
