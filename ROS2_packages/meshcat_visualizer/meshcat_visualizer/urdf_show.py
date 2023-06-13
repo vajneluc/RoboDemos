@@ -9,10 +9,11 @@ import meshcat.geometry as g
 import meshcat.transformations as tf
 import meshcat_shapes
 
-
+# Paths to urdf
 default_urdf_path = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda2_inertias.urdf"
 mesh_path = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"
 
+# Build from URDF
 model, collision_model, visual_model = pin.buildModelsFromUrdf(
     default_urdf_path, mesh_path, pin.JointModelFreeFlyer()
 )

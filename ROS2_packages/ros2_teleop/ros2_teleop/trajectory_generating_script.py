@@ -39,7 +39,6 @@ names_list = ["panda_joint1",
               "panda_joint7"]
 
 for index, row in df.iterrows():
-    print(index, row)
     if index == start_index:
         start_waypoint_configuration = [row[x] for x in names_list]
     if index == stop_index:

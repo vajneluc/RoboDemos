@@ -103,10 +103,8 @@ class MeshcatVisualizerNode(Node):
                 self.create_axes(joint_name)
         self.create_axes("ee")
         
-        # Init EE coords
-        self.ee_coord = None
-        #self.viz.viewer["AXES"]["ee"]["coord"].set_object(g.Box([1, 1, 2]),g.MeshPhongMaterial(map=g.TextTexture(f"{self.ee_coord}")))
-        #self.viz.viewer.set_object(g.SceneText(f'{self.ee_coord}',font_size=100))
+        # Time for updating frequency
+        self.frame_count = 0
         
 
     # Callback function for /mytopic
@@ -116,16 +114,20 @@ class MeshcatVisualizerNode(Node):
 
     # Callback function for /joint_states
     def joint_listener_callback(self, msg):
-        self.last_joint = msg
-        names = msg.name
-        positions = msg.position
-        out = []
-        for name, pos in zip(names, positions):
-            if "panda_joint" in name:
-                out.append((name, pos))
-        out.sort(key=lambda x: x[0])
-        out_positions = [np[1] for np in out]
-        self.update(out_positions)
+        self.frame_count += 1
+        if self.frame_count == 10:
+            self.last_joint
+            self.last_joint = msg
+            names = msg.name
+            positions = msg.position
+            out = []
+            for name, pos in zip(names, positions):
+                if "panda_joint" in name:
+                    out.append((name, pos))
+            out.sort(key=lambda x: x[0])
+            out_positions = [np[1] for np in out]
+            self.update(out_positions)
+            self.frame_count = 0
 
     # Function for creating Axes for panda joints
     def create_axes(self, joint_name):
@@ -185,6 +187,7 @@ class MeshcatVisualizerNode(Node):
       
         # Find ee index in oMf
         ee_indx = self.model.getFrameId("panda_link8")
+        
         # Display ee axis
         placement = self.viz.data.oMf[ee_indx]  # < ---(9) this index works for oMi
 
@@ -192,25 +195,23 @@ class MeshcatVisualizerNode(Node):
         t_matrix_x = tf.translation_matrix(placement.translation + np.array([0, -0.2, 0]))
         t_matrix_y = tf.translation_matrix(placement.translation + np.array([0, -0.25, 0]))
         t_matrix_z = tf.translation_matrix(placement.translation + np.array([0, -0.3, 0]))
-        # Update ee position
+        
+        #  Update ee position
         ee_x_coord = round(placement.translation[0], 3)
         ee_y_coord = round(placement.translation[1], 3)
         ee_z_coord = round(placement.translation[2], 3)
         
+        # Display ee coords
         meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coord_x"], f"X = {ee_x_coord}", font_size=10)
         meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coord_y"], f"Y = {ee_y_coord}", font_size=10)
         meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coord_z"], f"Z = {ee_z_coord}", font_size=10)
+
+        # update coordinate text position
         self.viz.viewer["AXES"]["ee"]["ee_coord_x"].set_transform(t_matrix_x)
         self.viz.viewer["AXES"]["ee"]["ee_coord_y"].set_transform(t_matrix_y)
         self.viz.viewer["AXES"]["ee"]["ee_coord_z"].set_transform(t_matrix_z)
 
-        # EE coord
-        
-        #meshcat_shapes.textarea(self.viz.viewer["EE"], f"{self.viz.data.oMi[9]}")
 
-    def link_axes(self):
-        # Not implemented
-        None
 
     # Function for updating
     def update(self, panda_position):
