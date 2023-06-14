@@ -90,6 +90,52 @@ viz.displayVisuals(DISPLAY_VISUALS)
 
 duration = 3
 
+def create_text():
+    # Create reference frame
+        meshcat_shapes.frame(viz.viewer["world"]["reference"], axis_length=0.2, axis_thickness=0.01, opacity=0.8, origin_radius=0.02)
+        viz.viewer["world"]["reference"].set_transform(tf.translation_matrix(np.array([0.5, - 0.5, 0])))
+
+        # Find ee index in oMf
+        ee_indx = model.getFrameId("panda_hand_tcp")
+        
+        # Display ee axis
+        oMf = viz.data.oMf[ee_indx]  # < ---(9) this index works for oMi
+        t_matrix = tf.translation_matrix(oMf.translation)
+        r_matrix = oMf.rotation
+        t_matrix[0:3, 0:3] = r_matrix
+
+        # Calculate matrixes
+        t_matrix_x = tf.translation_matrix(np.array([0, -0.2, 0]))
+        t_matrix_y = tf.translation_matrix(np.array([0, -0.25, 0]))
+        t_matrix_z = tf.translation_matrix(np.array([0, -0.3, 0]))
+        t_matrix_quat = tf.translation_matrix(np.array([0, -0.05, 0]))
+        t_matrix_angle = tf.translation_matrix(np.array([0, -0.1, 0]))
+        t_matrix_axis = tf.translation_matrix(np.array([0, -0.15, 0]))
+        
+        #  Update ee position
+        ee_x_coord = round(oMf.translation[0], 3)
+        ee_y_coord = round(oMf.translation[1], 3)
+        ee_z_coord = round(oMf.translation[2], 3)
+
+        quat = pin.Quaternion(r_matrix)
+        angle = pin.AngleAxis(r_matrix).angle
+        axis =  pin.AngleAxis(r_matrix).axis
+
+        # Display ee coords
+        meshcat_shapes.textarea(viz.viewer["world"]["reference"]["ee_coord_x"], f"X = {ee_x_coord}", font_size=10)
+        meshcat_shapes.textarea(viz.viewer["world"]["reference"]["ee_coord_y"], f"Y = {ee_y_coord}", font_size=10)
+        meshcat_shapes.textarea(viz.viewer["world"]["reference"]["ee_coord_z"], f"Z = {ee_z_coord}", font_size=10)
+        meshcat_shapes.textarea(viz.viewer["world"]["reference"]["quat"], f"X = {round(quat.x, 3)} Y = {round(quat.y, 3)} Z = {round(quat.z, 3)} W = {round(quat.w,3)}", font_size=10)
+        meshcat_shapes.textarea(viz.viewer["world"]["reference"]["angle"], f"angle = {round(angle, 3)}", font_size=10)
+        meshcat_shapes.textarea(viz.viewer["world"]["reference"]["axis"], f"axis = [{round(axis[0],3)}, {round(axis[1],3)}, {round(axis[2],3)}]", font_size=10)
+
+        # Update coordinate text position
+        viz.viewer["world"]["reference"]["ee_coord_x"].set_transform(t_matrix_x)
+        viz.viewer["world"]["reference"]["ee_coord_y"].set_transform(t_matrix_y)
+        viz.viewer["world"]["reference"]["ee_coord_z"].set_transform(t_matrix_z)
+        viz.viewer["world"]["reference"]["quat"].set_transform(t_matrix_quat)
+        viz.viewer["world"]["reference"]["angle"].set_transform(t_matrix_angle)
+        viz.viewer["world"]["reference"]["axis"].set_transform(t_matrix_axis)
 
 while True:
     for waypoint in configurations_list:
@@ -131,52 +177,7 @@ while True:
                 viz.viewer[frame.name]["name"].set_transform(t_matrix_name)
                 viz.viewer[frame.name]["frame"].set_transform(t_matrix_frame)
         
-        # Create reference frame
-        meshcat_shapes.frame(viz.viewer["world"]["reference"], axis_length=0.2, axis_thickness=0.01, opacity=0.8, origin_radius=0.02)
-        viz.viewer["AXES"]["reference"].set_transform(tf.translation_matrix(np.array([0.5, - 0.5, 0])))
-
-        # Find ee index in oMf
-        ee_indx = model.getFrameId("panda_hand_tcp")
-        
-        # Display ee axis
-        oMf = viz.data.oMf[ee_indx]  # < ---(9) this index works for oMi
-        t_matrix = tf.translation_matrix(oMf.translation)
-        r_matrix = oMf.rotation
-        t_matrix[0:3, 0:3] = r_matrix
-
-        # Calculate matrixes
-        t_matrix_x = tf.translation_matrix(np.array([0, -0.2, 0]))
-        t_matrix_y = tf.translation_matrix(np.array([0, -0.25, 0]))
-        t_matrix_z = tf.translation_matrix(np.array([0, -0.3, 0]))
-        t_matrix_quat = tf.translation_matrix(np.array([0, -0.05, 0]))
-        t_matrix_angle = tf.translation_matrix(np.array([0, -0.1, 0]))
-        t_matrix_axis = tf.translation_matrix(np.array([0, -0.15, 0]))
-        
-        #  Update ee position
-        ee_x_coord = round(oMf.translation[0], 3)
-        ee_y_coord = round(oMf.translation[1], 3)
-        ee_z_coord = round(oMf.translation[2], 3)
-
-        quat = pin.Quaternion(r_matrix)
-        angle = pin.AngleAxis(r_matrix).angle
-        axis =  pin.AngleAxis(r_matrix).axis
-
-        # Display ee coords
-        meshcat_shapes.textarea(viz.viewer["world"]["ee_coord_x"], f"X = {ee_x_coord}", font_size=10)
-        meshcat_shapes.textarea(viz.viewer["world"]["ee_coord_y"], f"Y = {ee_y_coord}", font_size=10)
-        meshcat_shapes.textarea(viz.viewer["world"]["ee_coord_z"], f"Z = {ee_z_coord}", font_size=10)
-        meshcat_shapes.textarea(viz.viewer["AXES"]["reference"]["quat"], f"X = {round(quat.x, 3)} Y = {round(quat.y, 3)} Z = {round(quat.z, 3)} W = {round(quat.w,3)}", font_size=10)
-        meshcat_shapes.textarea(viz.viewer["AXES"]["reference"]["angle"], f"angle = {round(angle, 3)}", font_size=10)
-        meshcat_shapes.textarea(viz.viewer["AXES"]["reference"]["axis"], f"axis = [{round(axis[0],3)}, {round(axis[1],3)}, {round(axis[2],3)}]", font_size=10)
-
-        # Update coordinate text position
-        viz.viewer["world"]["ee_coord_x"].set_transform(t_matrix_x)
-        viz.viewer["world"]["ee_coord_y"].set_transform(t_matrix_y)
-        viz.viewer["world"]["ee_coord_z"].set_transform(t_matrix_z)
-        viz.viewer["AXES"]["reference"]["quat"].set_transform(t_matrix_quat)
-        viz.viewer["AXES"]["reference"]["angle"].set_transform(t_matrix_angle)
-        viz.viewer["AXES"]["reference"]["axis"].set_transform(t_matrix_axis)
-        
+        create_text()
         start_time = time.time()
         viz.display(q)
         time.sleep(duration)
