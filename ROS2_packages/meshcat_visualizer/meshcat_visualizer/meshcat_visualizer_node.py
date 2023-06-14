@@ -173,21 +173,8 @@ class MeshcatVisualizerNode(Node):
         )
         self.viz.viewer["AXES"][joint_name]["Z"].set_transform(Rx @ axes_translation)
 
-    # Function for displaying panda joint axes
-    def display_joint_axes(self):
-        
-        # Pair frame name with oMf data
-        for frame, oMf in zip(self.model.frames, self.viz.data.oMf):
-            if "panda_joint" in frame.name:
-                joint_indx = self.model.getFrameId(frame.name)
-                # Calculate matrixes
-                t_matrix = tf.translation_matrix(oMf.translation)
-                r_matrix = oMf.rotation
-                t_matrix[0:3, 0:3] = r_matrix
-                
-                # Update Axes position
-                self.viz.viewer["AXES"][frame.name].set_transform(t_matrix)
-        
+    # Function for displaying EE Coords and EE Quaternion + Reference Frame
+    def display_ee_info(self):
         # Find ee index in oMf
         ee_indx = self.model.getFrameId("panda_hand_tcp")
         
@@ -230,7 +217,24 @@ class MeshcatVisualizerNode(Node):
         self.viz.viewer["AXES"]["reference"]["angle"].set_transform(t_matrix_angle)
         self.viz.viewer["AXES"]["reference"]["axis"].set_transform(t_matrix_axis)
 
-        self.get_logger().info(f"\nangle = {angle}\naxis =  {axis}\nquat = {quat}")
+        # self.get_logger().info(f"\nangle = {angle}\naxis =  {axis}\nquat = {quat}")
+    
+    # Function for displaying panda joint axes
+    def display_joint_axes(self):
+        
+        # Pair frame name with oMf data
+        for frame, oMf in zip(self.model.frames, self.viz.data.oMf):
+            if "panda_joint" in frame.name:
+                joint_indx = self.model.getFrameId(frame.name)
+                # Calculate matrixes
+                t_matrix = tf.translation_matrix(oMf.translation)
+                r_matrix = oMf.rotation
+                t_matrix[0:3, 0:3] = r_matrix
+                
+                # Update Axes position
+                self.viz.viewer["AXES"][frame.name].set_transform(t_matrix)
+        
+        self.display_ee_info()
         
         
 

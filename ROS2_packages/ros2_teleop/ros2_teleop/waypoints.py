@@ -209,14 +209,17 @@ class WaypointNode(Node):
         # Linear speed
         if k.key_r:
             self.linear_speed *= coefficients[1]
+            self.show_speed_settings()
         elif k.key_f:
             self.linear_speed *= coefficients[0]
-
+            self.show_speed_settings()
         # Angular speed
         if k.key_y:
             self.angular_speed *= coefficients[1]
+            self.show_speed_settings()
         elif k.key_h:
             self.angular_speed *= coefficients[0]
+            self.show_speed_settings()
 
         # Initialize twist linear and angular values
         Lx = 0
@@ -295,14 +298,18 @@ class WaypointNode(Node):
         # Linear speed bindings
         if j.buttons[0]:
             self.linear_speed *= coefficients[0]
+            self.show_speed_settings()
         elif j.buttons[3]:
             self.linear_speed *= coefficients[1]
+            self.show_speed_settings()
 
         # Angular speed bindings
         if j.buttons[2]:
             self.angular_speed *= coefficients[0]
+            self.show_speed_settings()
         elif j.buttons[1]:
             self.angular_speed *= coefficients[1]
+            self.show_speed_settings()
 
         # Initialize twist linear and angular values
         Lx = 0
