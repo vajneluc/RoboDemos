@@ -24,16 +24,13 @@ names_list = ["time_ns",
               "panda_joint7"]
 
 if len(sys.argv) > 1:
-    repeat = sys.argv[1]
-    if repeat == "0":
-        repeat == False
-    elif repeat == "1":
-        repeat == True
+    speed_coefficient = float(sys.argv[1])
+elif len(sys.argv) > 2:
+    speed_coefficient = float(sys.argv[1])
+    repeat = int(sys.argv[2])
 else:
-    repeat = False
-
-if len(sys.argv) > 2:
-    speed_coefficient = float(sys.argv[2])
+    speed_coefficient = 1
+    repeat = 1
 
 df = pd.read_csv(traces_csv_path)
 
@@ -42,7 +39,8 @@ trace_list = []
 for index, row in df.iterrows():
     trace_configuration = [row[x] for x in names_list]
     trace_list.append(trace_configuration)
-
+print(trace_configuration)
+exit()
 # Paths to urdf
 default_urdf_path = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/urdf/panda2_inertias.urdf"
 mesh_path = "/home/ros/devel/RoboDemos/ROS2_packages/panda2_description/panda/meshes"

@@ -97,12 +97,16 @@ class MeshcatVisualizerNode(Node):
         self.viz.displayCollisions(DISPLAY_COLLISIONS)
         self.viz.displayVisuals(DISPLAY_VISUALS)
 
+        
         # Init Axes X Y Z for all joints
         for joint_name in self.model.names:  
             if "panda_joint" in joint_name:
                 self.create_axes(joint_name)
-        self.create_axes("ee")
         
+
+        self.create_axes("reference")
+        self.create_axes("ee")
+        self.viz.viewer["AXES"]["reference"].set_transform(tf.translation_matrix(np.array([0.5, - 0.5, 0])))
         # Time for updating frequency
         self.frame_count = 0
         
@@ -172,45 +176,63 @@ class MeshcatVisualizerNode(Node):
     # Function for displaying panda joint axes
     def display_joint_axes(self):
         
-        # Pair joit name with oMf data
-        for joint_name in self.model.names:
-            if "panda_joint" in joint_name:
-                joint_indx = self.model.getFrameId(joint_name)
-                placement = self.viz.data.oMf[joint_indx]
+        # Pair frame name with oMf data
+        for frame, oMf in zip(self.model.frames, self.viz.data.oMf):
+            if "panda_joint" in frame.name:
+                joint_indx = self.model.getFrameId(frame.name)
                 # Calculate matrixes
-                t_matrix = tf.translation_matrix(placement.translation)
-                r_matrix = placement.rotation
+                t_matrix = tf.translation_matrix(oMf.translation)
+                r_matrix = oMf.rotation
                 t_matrix[0:3, 0:3] = r_matrix
                 
                 # Update Axes position
-                self.viz.viewer["AXES"][joint_name].set_transform(t_matrix)
-      
+                self.viz.viewer["AXES"][frame.name].set_transform(t_matrix)
+        
         # Find ee index in oMf
-        ee_indx = self.model.getFrameId("panda_link8")
+        ee_indx = self.model.getFrameId("panda_hand_tcp")
         
         # Display ee axis
-        placement = self.viz.data.oMf[ee_indx]  # < ---(9) this index works for oMi
+        oMf = self.viz.data.oMf[ee_indx]  # < ---(9) this index works for oMi
+        t_matrix = tf.translation_matrix(oMf.translation)
+        r_matrix = oMf.rotation
+        t_matrix[0:3, 0:3] = r_matrix
+        self.viz.viewer["AXES"]["ee"].set_transform(t_matrix)
 
         # Calculate matrixes
-        t_matrix_x = tf.translation_matrix(placement.translation + np.array([0, -0.2, 0]))
-        t_matrix_y = tf.translation_matrix(placement.translation + np.array([0, -0.25, 0]))
-        t_matrix_z = tf.translation_matrix(placement.translation + np.array([0, -0.3, 0]))
-        
+        t_matrix_x = tf.translation_matrix(np.array([0, -0.2, 0]))
+        t_matrix_y = tf.translation_matrix(np.array([0, -0.25, 0]))
+        t_matrix_z = tf.translation_matrix(np.array([0, -0.3, 0]))
+        t_matrix_quat = tf.translation_matrix(np.array([0, -0.05, 0]))
+        t_matrix_angle = tf.translation_matrix(np.array([0, -0.1, 0]))
+        t_matrix_axis = tf.translation_matrix(np.array([0, -0.15, 0]))
         #  Update ee position
-        ee_x_coord = round(placement.translation[0], 3)
-        ee_y_coord = round(placement.translation[1], 3)
-        ee_z_coord = round(placement.translation[2], 3)
-        
+        ee_x_coord = round(oMf.translation[0], 3)
+        ee_y_coord = round(oMf.translation[1], 3)
+        ee_z_coord = round(oMf.translation[2], 3)
+
+        quat = pin.Quaternion(r_matrix)
+        angle = pin.AngleAxis(r_matrix).angle
+        axis =  pin.AngleAxis(r_matrix).axis
+
         # Display ee coords
-        meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coord_x"], f"X = {ee_x_coord}", font_size=10)
-        meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coord_y"], f"Y = {ee_y_coord}", font_size=10)
-        meshcat_shapes.textarea(self.viz.viewer["AXES"]["ee"]["ee_coord_z"], f"Z = {ee_z_coord}", font_size=10)
+        meshcat_shapes.textarea(self.viz.viewer["world"]["ee_coord_x"], f"X = {ee_x_coord}", font_size=10)
+        meshcat_shapes.textarea(self.viz.viewer["world"]["ee_coord_y"], f"Y = {ee_y_coord}", font_size=10)
+        meshcat_shapes.textarea(self.viz.viewer["world"]["ee_coord_z"], f"Z = {ee_z_coord}", font_size=10)
+        meshcat_shapes.textarea(self.viz.viewer["AXES"]["reference"]["quat"], f"X = {round(quat.x, 3)} Y = {round(quat.y, 3)} Z = {round(quat.z, 3)} W = {round(quat.w,3)}", font_size=10)
+        meshcat_shapes.textarea(self.viz.viewer["AXES"]["reference"]["angle"], f"angle = {round(angle, 3)}", font_size=10)
+        meshcat_shapes.textarea(self.viz.viewer["AXES"]["reference"]["axis"], f"axis = [{round(axis[0],3)}, {round(axis[1],3)}, {round(axis[2],3)}]", font_size=10)
 
-        # update coordinate text position
-        self.viz.viewer["AXES"]["ee"]["ee_coord_x"].set_transform(t_matrix_x)
-        self.viz.viewer["AXES"]["ee"]["ee_coord_y"].set_transform(t_matrix_y)
-        self.viz.viewer["AXES"]["ee"]["ee_coord_z"].set_transform(t_matrix_z)
+        # Update coordinate text position
+        self.viz.viewer["world"]["ee_coord_x"].set_transform(t_matrix_x)
+        self.viz.viewer["world"]["ee_coord_y"].set_transform(t_matrix_y)
+        self.viz.viewer["world"]["ee_coord_z"].set_transform(t_matrix_z)
+        self.viz.viewer["AXES"]["reference"]["quat"].set_transform(t_matrix_quat)
+        self.viz.viewer["AXES"]["reference"]["angle"].set_transform(t_matrix_angle)
+        self.viz.viewer["AXES"]["reference"]["axis"].set_transform(t_matrix_axis)
 
+        self.get_logger().info(f"\nangle = {angle}\naxis =  {axis}\nquat = {quat}")
+        
+        
 
 
     # Function for updating

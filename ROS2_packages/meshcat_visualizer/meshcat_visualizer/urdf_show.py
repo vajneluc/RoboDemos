@@ -58,7 +58,7 @@ viz.displayVisuals(DISPLAY_VISUALS)
 
 
 for frame, oMf in zip(model.frames, data.oMf):
-    if str(frame.type) == "JOINT":
+    if frame.name == "panda_hand_tcp":
         meshcat_shapes.textarea(viz.viewer[frame.name]["name"], f"{frame.name}", font_size=10)
         meshcat_shapes.frame(viz.viewer[frame.name]["frame"],axis_length=0.2, axis_thickness=0.01, opacity=0.8, origin_radius=0.02)
         t_matrix_name = tf.translation_matrix(oMf.translation + np.array([0, -0.25, 0]))
