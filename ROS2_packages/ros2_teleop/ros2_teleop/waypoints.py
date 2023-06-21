@@ -331,7 +331,7 @@ class WaypointNode(Node):
         joy_az = j.axes[0]
 
         # Tolerance settings for joystick bindings
-        tolerance = 0.2
+        tolerance = 0.0
         # X Axis
         if abs(joy_x) >= tolerance:
             Lx = joy_x * self.linear_speed

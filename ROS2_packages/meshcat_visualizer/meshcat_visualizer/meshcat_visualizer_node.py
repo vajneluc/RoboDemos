@@ -109,7 +109,7 @@ class MeshcatVisualizerNode(Node):
         self.viz.viewer["AXES"]["reference"].set_transform(tf.translation_matrix(np.array([0.5, - 0.5, 0])))
         # Time for updating frequency
         self.frame_count = 0
-        
+        self.ee_info_counter = 0
 
     # Callback function for /mytopic
     def dummy_listener_callback(self, msg):
@@ -119,7 +119,7 @@ class MeshcatVisualizerNode(Node):
     # Callback function for /joint_states
     def joint_listener_callback(self, msg):
         self.frame_count += 1
-        if self.frame_count == 10:
+        if self.frame_count == 5:
             self.last_joint
             self.last_joint = msg
             names = msg.name
@@ -172,7 +172,7 @@ class MeshcatVisualizerNode(Node):
             g.MeshLambertMaterial(color=0x0000FF, reflectivity=0.8),
         )
         self.viz.viewer["AXES"][joint_name]["Z"].set_transform(Rx @ axes_translation)
-
+    
     # Function for displaying EE Coords and EE Quaternion + Reference Frame
     def display_ee_info(self):
         # Find ee index in oMf
@@ -192,6 +192,7 @@ class MeshcatVisualizerNode(Node):
         t_matrix_quat = tf.translation_matrix(np.array([0, -0.05, 0]))
         t_matrix_angle = tf.translation_matrix(np.array([0, -0.1, 0]))
         t_matrix_axis = tf.translation_matrix(np.array([0, -0.15, 0]))
+        
         #  Update ee position
         ee_x_coord = round(oMf.translation[0], 3)
         ee_y_coord = round(oMf.translation[1], 3)
@@ -234,13 +235,14 @@ class MeshcatVisualizerNode(Node):
                 # Update Axes position
                 self.viz.viewer["AXES"][frame.name].set_transform(t_matrix)
         
-        self.display_ee_info()
+
         
         
 
 
     # Function for updating
     def update(self, panda_position):
+        self.ee_info_counter += 1
         # Updates position of panda
         self.q[7:14] = panda_position
         self.viz.display(self.q)
@@ -248,7 +250,12 @@ class MeshcatVisualizerNode(Node):
         pin.updateFramePlacements(self.model, self.viz.data)
         # Updates position of axes
         self.display_joint_axes()
-
+        self.display_ee_info()
+        '''
+        if self.ee_info_counter == 3:
+            self.display_ee_info()
+            self.ee_info_counter == 0
+        '''
 
 def main():
     rclpy.init()
