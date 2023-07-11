@@ -1,0 +1,25 @@
+rosbag2_bagfile_information:
+  version: 4
+  storage_identifier: sqlite3
+  relative_file_paths:
+    - ros1-cart-e_0.db3
+  duration:
+    nanoseconds: 507633532075
+  starting_time:
+    nanoseconds_since_epoch: 1688476292801983664
+  message_count: 31797
+  topics_with_message_count:
+    - topic_metadata:
+        name: /joint_states
+        type: sensor_msgs/msg/JointState
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 15225
+    - topic_metadata:
+        name: /mytopic
+        type: dummy_control_msgs/msg/DummyControlDebug
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 16572
+  compression_format: ""
+  compression_mode: ""
