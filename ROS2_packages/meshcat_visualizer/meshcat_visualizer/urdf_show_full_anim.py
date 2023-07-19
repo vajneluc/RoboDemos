@@ -165,6 +165,17 @@ while True:
     h = link_a[0] + link_b[0] * math.cos(theta1) - link_b[1] * math.sin(theta1) + link_c[0] * math.cos(theta2) - link_c[1] * math.sin(theta2) + link_d[0]
     r = link_a[1] + link_b[0] * math.sin(theta1) + link_b[1] * math.cos(theta1) + link_c[0] * math.sin(theta2) + link_c[1] * math.cos(theta2) + link_d[1]
 
+    # h = ax + bx * cos(A) - by * sin(A) + cx * cos(A-B) - cy * sin(A-B) + dx
+    # r = ay + bx * sin(A) + by * cos(A) + cx * sin(A-B) + cy * cos(A-B) + dy
+
+    # H = h - ax - dx = bx * cos(A) - by * sin(A) + cx * cos(A-B) - cy * sin(A-B)
+    # R = r - ay - dy = bx * sin(A) + by * cos(A) + cx * sin(A-B) + cy * cos(A-B)
+
+    # H = bx * cos(A) - by * sin(A) + cx * cos(A-B) - cy * sin(A-B)
+    # R = bx * sin(A) + by * cos(A) + cx * sin(A-B) + cy * cos(A-B)
+
+    # ?? express A, B based on (H, R)
+
     print("  posA:", pos_A, "posB:", pos_B, "posC:", pos_C, "posHR:", pos_hr, "h=", h, "r=", r)
 
     viz.display(q)
