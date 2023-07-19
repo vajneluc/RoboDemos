@@ -186,15 +186,19 @@ while True:
     H = h - link_a[0] - link_d[0]
     R = r - link_a[1] - link_d[1]
 
-    print(f"b={b} c={c} H={H} R={R}")
+    print(f"b={b} c={c} H={H} R={R} A={A} B={B} D={A-B}")
 
     # position pf point P in plane...
     px = (-H*(H**3 + H * R**2 + H * b**2 - H * c**2 + math.sqrt(-H**4 * R**2 - 2 * H**2 * R**4 + 2* H**2 * R**2 * b**2 + 2 * H**2 * R**2 * c**2 - R**6 + 2 * R**4 * b**2 + 2 * R**4 * c**2 - R**2 * b**4 + 2 * R**2 * b**2 * c**2 - R**2 * c**4))/(H**2 + R**2) + H**2 + R**2 + b**2 - c**2)/(2*R)
     # y = math.sqrt(b**2 - x**2) 
     py = (H**3 + H * R**2 + H * b**2 - H*c**2 + math.sqrt(-H**4 * R**2 - 2*H**2 * R**4 + 2* H**2 * R**2 * b**2 + 2 * H**2 * R**2 * c**2 - R**6 + 2 * R**4 * b**2 + 2 * R**4 * c**2 - R**2 * b**4 + 2 * R**2 * b**2 * c**2 - R**2 * c**4))/(2*(H**2 + R**2))
     py += link_a[0]
+    
+    Ahat = math.asin(px / b) # not correct
+    Dhat = math.pi - math.asin((R - px)/c)
+    Bhat = Ahat - Dhat
 
-    print("P:", px, py) # equal to Joint4 position...
+    print("P:", px, py, "Ahat:", Ahat, "Bhat:", Bhat, "Dhat:", Dhat) # equal to Joint4 position...
 
 
     print("  posA:", pos_A, "posB:", pos_B, "posC:", pos_C, "posHR:", pos_hr, "h=", h, "r=", r)
