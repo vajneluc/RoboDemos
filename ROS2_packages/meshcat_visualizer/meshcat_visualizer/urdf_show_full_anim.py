@@ -175,6 +175,10 @@ while True:
     # R = bx * sin(A) + by * cos(A) + cx * sin(A-B) + cy * cos(A-B)
 
     # ?? express A, B based on (H, R)
+    # Substitute: D = A-B
+
+    # H = bx * cos(A) - by * sin(A) + cx * cos(D) - cy * sin(D)
+    # R = bx * sin(A) + by * cos(A) + cx * sin(D) + cy * cos(D)
 
     print("  posA:", pos_A, "posB:", pos_B, "posC:", pos_C, "posHR:", pos_hr, "h=", h, "r=", r)
 
