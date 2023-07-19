@@ -19,11 +19,13 @@ import matplotlib.pyplot as plt
 x = np.array([0,1])
 y = np.array([0,1])
  
+plt.gca().set_aspect('equal')
+
 # to run GUI event loop
 plt.ion()
  
 # here we are creating sub plots
-figure, ax = plt.subplots(figsize=(10, 8))
+figure, ax = plt.subplots(figsize=(10, 10))
 lineA, = ax.plot(x, y)
 lineB, = ax.plot(x, y)
 lineAB, = ax.plot(x, y)
@@ -110,15 +112,13 @@ for frame, oMf in zip(model.frames, data.oMf):
 frame = 0
 current_time = 0
 alpha = 0
-A = 0.6 # 0 # -0.7853981633974483
+A = 0.4 # 0 # -0.7853981633974483
 beta = 0
 B = -math.pi/2 # -2.356194490192345
 gamma = 0
 C = 0 # 0.3 # 0 # 1.5707963267948966
 delta = 0.7853981633974483
 
-# angular constraint
-C = A - B
 
 link_a = np.array([0.333, 0])
 link_b = np.array([0.316, 0.0825])
@@ -130,14 +130,23 @@ def rotate_vec_by_angle(vec, theta):
     rot = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
     return np.dot(rot, vec)
 
+def rotate_xy_by_angle(x, y, theta):
+    u = x * math.cos(theta) - y * math.sin(theta)
+    v = y * math.sin(theta) + y * math.cos(theta)
+    return u, v
+
 
 while True:
-    print("Rendering frame:", frame, A, A-B, A-B-C, "J2:", transforms["panda_joint2"].translation, "J4:", transforms["panda_joint4"].translation, "J6:", transforms["panda_joint6"].translation, "J8:", transforms["panda_joint8"].translation)
+    print("Rendering frame:", frame, "J2:", transforms["panda_joint2"].translation, "J4:", transforms["panda_joint4"].translation, "J6:", transforms["panda_joint6"].translation, "J8:", transforms["panda_joint8"].translation)
+    # angular constraint
+    C = A - B
+
     q2 = [alpha, A, beta, B, gamma, C, delta]
     apply_joint_config(q2)
     pin.forwardKinematics(model, viz.data, q)
     pin.updateFramePlacements(model, viz.data)
 
+    # compute coordinates r, h based on angles A,B
     origin = np.array([0,0])
     pos_A = origin + link_a
     pos_B = pos_A + rotate_vec_by_angle(link_b, A)
@@ -147,7 +156,16 @@ while True:
     pos_D = pos_C + rotate_vec_by_angle(link_d, A-B-C)
     pos_CD = pos_C + rotate_vec_by_angle([0, link_d[1]], A-B-C)
 
-    print("  posA:", pos_A, "posB:", pos_B, "posC:", pos_C, "posD:", pos_D, "C:", C)
+    # express formulas for computing h, r
+    # so we can get inverse formula for computing A,B from (h,r)
+    pos_hr = link_a + rotate_vec_by_angle(link_b, A) + rotate_vec_by_angle(link_c, A-B) + link_d
+
+    theta1 = A
+    theta2 = A-B
+    h = link_a[0] + link_b[0] * math.cos(theta1) - link_b[1] * math.sin(theta1) + link_c[0] * math.cos(theta2) - link_c[1] * math.sin(theta2) + link_d[0]
+    r = link_a[1] + link_b[0] * math.sin(theta1) + link_b[1] * math.cos(theta1) + link_c[0] * math.sin(theta2) + link_c[1] * math.cos(theta2) + link_d[1]
+
+    print("  posA:", pos_A, "posB:", pos_B, "posC:", pos_C, "posHR:", pos_hr, "h=", h, "r=", r)
 
     viz.display(q)
     delay = 0.05
