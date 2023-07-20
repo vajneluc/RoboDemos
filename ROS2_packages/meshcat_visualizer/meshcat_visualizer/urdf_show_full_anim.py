@@ -33,6 +33,7 @@ lineC, = ax.plot(x, y)
 lineBC, = ax.plot(x, y)
 lineD, = ax.plot(x, y)
 lineCD, = ax.plot(x, y)
+pointP, =  ax.plot(x, y, marker="*")
   
 # setting x-axis label and y-axis label
 plt.xlabel("X-axis")
@@ -125,6 +126,10 @@ link_b = np.array([0.316, 0.0825])
 link_c = np.array([0.384, -0.0825])
 link_d = np.array([-0.107, 0.088]) 
 
+link_b_angle = math.atan2(link_b[1], link_b[0])
+link_c_angle = math.atan2(link_c[1], link_c[0])
+link_d_angle = math.atan2(link_d[1], link_d[0])
+
 
 def rotate_vec_by_angle(vec, theta):
     rot = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
@@ -192,13 +197,13 @@ while True:
     px = (-H*(H**3 + H * R**2 + H * b**2 - H * c**2 + math.sqrt(-H**4 * R**2 - 2 * H**2 * R**4 + 2* H**2 * R**2 * b**2 + 2 * H**2 * R**2 * c**2 - R**6 + 2 * R**4 * b**2 + 2 * R**4 * c**2 - R**2 * b**4 + 2 * R**2 * b**2 * c**2 - R**2 * c**4))/(H**2 + R**2) + H**2 + R**2 + b**2 - c**2)/(2*R)
     # y = math.sqrt(b**2 - x**2) 
     py = (H**3 + H * R**2 + H * b**2 - H*c**2 + math.sqrt(-H**4 * R**2 - 2*H**2 * R**4 + 2* H**2 * R**2 * b**2 + 2 * H**2 * R**2 * c**2 - R**6 + 2 * R**4 * b**2 + 2 * R**4 * c**2 - R**2 * b**4 + 2 * R**2 * b**2 * c**2 - R**2 * c**4))/(2*(H**2 + R**2))
-    py += link_a[0]
+    py += link_a[0]    
     
-    Ahat = math.asin(px / b) # not correct
-    Dhat = math.pi - math.asin((R - px)/c)
+    Ahat = math.asin(px / b) - link_b_angle 
+    Dhat = math.pi - math.asin((R - px)/c) - link_c_angle
     Bhat = Ahat - Dhat
 
-    print("P:", px, py, "Ahat:", Ahat, "Bhat:", Bhat, "Dhat:", Dhat) # equal to Joint4 position...
+    print("P:", px, py, "Ahat:", Ahat, "Bhat:", Bhat, "Dhat:", Dhat, "LinkB:", link_b_angle, "LinkC:", link_c_angle, "LinkD:", link_d_angle) # equal to Joint4 position...
 
 
     print("  posA:", pos_A, "posB:", pos_B, "posC:", pos_C, "posHR:", pos_hr, "h=", h, "r=", r)
@@ -231,6 +236,8 @@ while True:
     lineD.set_xdata([pos_C[1], pos_D[1]])
     lineCD.set_ydata([pos_C[0], pos_CD[0], pos_D[0]])
     lineCD.set_xdata([pos_C[1], pos_CD[1], pos_D[1]])
+    pointP.set_xdata([px])
+    pointP.set_ydata([py])
  
     # drawing updated values
     figure.canvas.draw()
