@@ -178,11 +178,17 @@ if __name__ == "__main__":
 
     qsdf = []
     time_ns = 0
-    for i, q in enumerate(qs):
-        print(q)
+    for i in range(len(qs)):
+        q = qs[i]
+        dq = dqs[i]
+        ddq = ddqs[i]
         row = dict(time_ns=time_ns)
         for j in range(7):
-            row[f"panda_joint{j+1}"] = q[j]
+            row[f"q{j}"] = q[j]
+        for j in range(7):
+            row[f"dq{j}"] = dq[j]
+        for j in range(7):
+            row[f"ddq{j}"] = ddq[j]
         qsdf.append(row)
         time_ns += int(delta * 1e9)
     qsdf = pd.DataFrame(qsdf)
