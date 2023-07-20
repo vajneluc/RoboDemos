@@ -3,7 +3,8 @@ from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 from panda_simple_kinematics import PandaSimpleKinematics, rotate_vec_by_angle, rotate_xy_by_angle
 import pandas as pd
- 
+from interpolator import HermiteQuinticInterpolatorT
+
 
 class BoxTrajectoryPlanner(object):
     def __init__(self, minx, maxx, miny, maxy, minz, maxz):
@@ -58,43 +59,124 @@ if __name__ == "__main__":
     planner = BoxTrajectoryPlanner(0.3, 0.6, -0.5, 0.5, 0.1, 0.6)
     psk = PandaSimpleKinematics()
 
-    print(planner)
-
     N = 100
     points = []    
     pt = np.array([0.4, 0, 0.5])    
     points.append(pt)
     for i in range(N):
-        print(pt)
         pt = planner.sample_near(pt, 0.1)
         points.append(pt)
 
 
 
     # create smooth path
-    delta = 0.01 # 1cm
+    delta = 0.03333333 # secs
+    transition_time = 3.0 # 2 secs
+    waiting_time = 2.0
 
-    s = 0
-    current_s = 0
-    sampled_points = []
+    xs = []
+    ys = []
+    zs = []
+    dxs = []
+    dys = []
+    dzs = []
+    ddxs = []
+    ddys = []
+    ddzs = []
+    dddxs = []
+    dddys = []
+    dddzs = []
+
     for pt, nextpt in zip(points[:-1], points[1:]):
         print("Segment:", pt, nextpt)
         vec = nextpt - pt
         len_vec = np.linalg.norm(vec)
         norm_vec = vec / len_vec
-        while current_s < len_vec:
-            current_pt = pt + current_s * norm_vec
-            sampled_points.append(current_pt)
-            current_s += delta
-            s += delta
-        if current_s > len_vec:
-            current_s -= len_vec
+
+        ax, ay, az = pt.tolist()
+        bx, by, bz = vec.tolist()
+        ix = HermiteQuinticInterpolatorT(transition_time, ax, bx)
+        iy = HermiteQuinticInterpolatorT(transition_time, ay, by)
+        iz = HermiteQuinticInterpolatorT(transition_time, az, bz)
+
+        t = 0
+        while t <= transition_time:
+            x = ix.f(t)
+            y = iy.f(t)
+            z = iz.f(t)
+            dx = ix.df(t)
+            dy = iy.df(t)
+            dz = iz.df(t)
+            ddx = ix.ddf(t)
+            ddy = iy.ddf(t)
+            ddz = iz.ddf(t)
+            dddx = ix.dddf(t)
+            dddy = iy.dddf(t)
+            dddz = iz.dddf(t)
+            xs.append(x)
+            ys.append(y)
+            zs.append(z)
+            dxs.append(dx)
+            dys.append(dy)
+            dzs.append(dz)
+            ddxs.append(ddx)
+            ddys.append(ddy)
+            ddzs.append(ddz)
+            dddxs.append(dddx)
+            dddys.append(dddy)
+            dddzs.append(dddz)
+            t += delta
+
+        t = 0
+        while t <= waiting_time:
+            xs.append(x)
+            ys.append(y)
+            zs.append(z)
+            dxs.append(dx)
+            dys.append(dy)
+            dzs.append(dz)
+            ddxs.append(ddx)
+            ddys.append(ddy)
+            ddzs.append(ddz)
+            dddxs.append(dddx)
+            dddys.append(dddy)
+            dddzs.append(dddz)
+            t += delta
+
 
     # use inverse kinematics to plan joint-space trajectory for Panda robot...
-    qs = [psk.make_qvec(*psk.inverse_kinematics(*pt.tolist())) for pt in sampled_points]
+    qs = [psk.make_qvec(*psk.inverse_kinematics(*pt)) for pt in zip(xs, ys, zs)]
+    qs = np.array(qs)
+
+    # ??? strange results? not correctly used...
+    dqs = np.diff(qs, n=1, append=0) / delta
+    ddqs = np.diff(dqs, n=1, append=0) / delta
+    dddqs = np.diff(ddqs, n=1, append=0) / delta
+
+    # this seems to be correct...
+    dqs = []
+    for q0, q1 in zip(qs[:-1], qs[1:]):
+        dq = (q1-q0)/delta
+        dqs.append(dq)
+    dqs.append(np.zeros(7))
+    dqs = np.array(dqs)
+
+    ddqs = []
+    for q0, q1 in zip(dqs[:-1], dqs[1:]):
+        ddq = (q1-q0)/delta
+        ddqs.append(ddq)
+    ddqs.append(np.zeros(7))
+    ddqs = np.array(ddqs)
+
+    dddqs = []
+    for q0, q1 in zip(ddqs[:-1], ddqs[1:]):
+        dddq = (q1-q0)/delta
+        dddqs.append(dddq)
+    dddqs.append(np.zeros(7))
+    dddqs = np.array(dddqs)
+
 
     qsdf = []
-    delta_t = 0.05 # 50 ms
     time_ns = 0
     for i, q in enumerate(qs):
         print(q)
@@ -102,39 +184,85 @@ if __name__ == "__main__":
         for j in range(7):
             row[f"panda_joint{j+1}"] = q[j]
         qsdf.append(row)
-        time_ns += int(delta_t * 1e9)
+        time_ns += int(delta * 1e9)
     qsdf = pd.DataFrame(qsdf)
     qsdf.to_excel("/home/ros/dumps/q_generated_100.xlsx", index=False)
     qsdf.to_csv("/home/ros/dumps/q_generated_100.csv", index=False)
 
 
-    print("Number of points in trajectory:", len(qs))
-
-
     fig = plt.figure()
     
     # syntax for 3-D projection
     ax = plt.axes(projection ='3d')
-    
-    # defining all 3 axis
-    z = [pt[2] for pt in points]
-    x = [pt[0] for pt in points]
-    y = [pt[1] for pt in points]
-    
+        
     # plotting
-    ax.plot3D(x, y, z, 'green')
+    ax.plot3D(xs, ys, zs, 'green')
     plt.show()
 
-    fig = plt.figure()
+    ts = np.arange(len(zs)) * delta
+
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
+    fig.suptitle('Planned Cartesian Trajectory')
+
+    ax1.plot(ts, xs, color="r", label="x")
+    ax1.plot(ts, ys, color="g", label="y")
+    ax1.plot(ts, zs, color="b", label="z")
+    ax1.legend(loc="upper right")
+
+    ax2.plot(ts, dxs, color="r", label="dx")
+    ax2.plot(ts, dys, color="g", label="dy")
+    ax2.plot(ts, dzs, color="b", label="dz")
+    ax2.legend(loc="upper right")
+
+    ax3.plot(ts, ddxs, color="r", label="ddx")
+    ax3.plot(ts, ddys, color="g", label="ddy")
+    ax3.plot(ts, ddzs, color="b", label="ddz")
+    ax3.legend(loc="upper right")
+
+    ax4.plot(ts, dddxs, color="r", label="dddx")
+    ax4.plot(ts, dddys, color="g", label="dddy")
+    ax4.plot(ts, dddzs, color="b", label="dddz")
+    ax4.legend(loc="upper right")
+
+    plt.show()
+
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
+    fig.suptitle('Planned Joint Trajectory')
+
+    ax1.plot(ts, qs[:,0], color="r", label = "q1")
+    ax1.plot(ts, qs[:,1], color="g", label = "q2")
+    ax1.plot(ts, qs[:,2], color="b", label = "q3")
+    ax1.plot(ts, qs[:,3], color="y", label = "q4")
+    ax1.plot(ts, qs[:,4], color="k", label = "q5")
+    ax1.plot(ts, qs[:,5], color="cyan", label = "q6")
+    ax1.plot(ts, qs[:,6], color="orange", label = "q7")
+    ax1.legend(loc="upper right")
+
+    ax2.plot(ts, dqs[:,0], color="r", label = "dq1")
+    ax2.plot(ts, dqs[:,1], color="g", label = "dq2")
+    ax2.plot(ts, dqs[:,2], color="b", label = "dq3")
+    ax2.plot(ts, dqs[:,3], color="y", label = "dq4")
+    ax2.plot(ts, dqs[:,4], color="k", label = "dq5")
+    ax2.plot(ts, dqs[:,5], color="cyan", label = "dq6")
+    ax2.plot(ts, dqs[:,6], color="orange", label = "dq7")
+    ax2.legend(loc="upper right")
+
+    ax3.plot(ts, ddqs[:,0], color="r", label = "ddq1")
+    ax3.plot(ts, ddqs[:,1], color="g", label = "ddq2")
+    ax3.plot(ts, ddqs[:,2], color="b", label = "ddq3")
+    ax3.plot(ts, ddqs[:,3], color="y", label = "ddq4")
+    ax3.plot(ts, ddqs[:,4], color="k", label = "ddq5")
+    ax3.plot(ts, ddqs[:,5], color="cyan", label = "ddq6")
+    ax3.plot(ts, ddqs[:,6], color="orange", label = "ddq7")
+    ax3.legend(loc="upper right")
+
+    ax4.plot(ts, dddqs[:,0], color="r", label = "dddq1")
+    ax4.plot(ts, dddqs[:,1], color="g", label = "dddq2")
+    ax4.plot(ts, dddqs[:,2], color="b", label = "dddq3")
+    ax4.plot(ts, dddqs[:,3], color="y", label = "dddq4")
+    ax4.plot(ts, dddqs[:,4], color="k", label = "dddq5")
+    ax4.plot(ts, dddqs[:,5], color="cyan", label = "dddq6")
+    ax4.plot(ts, dddqs[:,6], color="orange", label = "dddq7")
+    ax4.legend(loc="upper right")
     
-    # syntax for 3-D projection
-    ax = plt.axes(projection ='3d')
-    
-    # defining all 3 axis
-    z = [pt[2] for pt in sampled_points]
-    x = [pt[0] for pt in sampled_points]
-    y = [pt[1] for pt in sampled_points]
-    
-    # plotting
-    ax.plot3D(x, y, z, 'green')
     plt.show()
