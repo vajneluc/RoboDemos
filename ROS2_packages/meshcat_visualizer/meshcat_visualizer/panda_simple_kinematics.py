@@ -31,6 +31,13 @@ def rotate_xy_by_angle(x, y, theta):
 
 
 class PandaSimpleKinematics(object):
+    """
+    A class for analytical computing of forward and inverse kinematics for Panda robot 
+    in case when the end effector keeps its world orientation constant (as in the default configuration).
+
+    The Cartesian EE position (x,y,z) can be uniquely (a single solution) converted to angular coordinates (alpha, A, B).
+    The q vector for robot is then equal to [alpha, A, 0, B, 0, A - B, alpha+pi/4] .
+    """
     def __init__(self):
         self.link_a = np.array([0.333, 0])
         self.link_b = np.array([0.316, 0.0825])
@@ -72,11 +79,15 @@ class PandaSimpleKinematics(object):
         return x, y, h
 
     def inverse_kinematics(self, x, y, z):
-        alpha = math.atan2(y, x)
-        r = math.sqrt(x*x + y*y)
-        h = z
-        A, B, _, _ = self.compute_AB_from_hr(h, r)
-        return alpha, A, B
+        try:
+            alpha = math.atan2(y, x)
+            r = math.sqrt(x*x + y*y)
+            h = z
+            A, B, _, _ = self.compute_AB_from_hr(h, r)
+            return alpha, A, B
+        except ValueError as ve:
+            print(f"Math domain error! x={x} y={y} z={z}")
+            return None
 
     def make_qvec(self, alpha, A, B):
         C = A - B

@@ -99,7 +99,7 @@ viz.displayVisuals(DISPLAY_VISUALS)
 
 start_trace_time = trace_list[0][0]
 
-step = 0.02 
+step = 0.01
 
 def create_text():
     # Create reference frame
