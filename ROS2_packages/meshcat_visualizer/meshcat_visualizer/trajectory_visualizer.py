@@ -12,7 +12,9 @@ import meshcat.transformations as tf
 import meshcat_shapes
 
 # Path to Waypoint CSV
-traces_csv_path = "/home/ros/dumps/saved/Waypointleft/q.csv"
+# traces_csv_path = "/home/ros/dumps/saved/Waypointleft/q.csv"
+traces_csv_path = "/home/ros/dumps/q_generated_100.csv"
+
 
 # Joint name list
 names_list = ["time_ns",
@@ -99,7 +101,7 @@ viz.displayVisuals(DISPLAY_VISUALS)
 
 start_trace_time = trace_list[0][0]
 
-step = 0.01
+step = 0.005
 
 def create_text():
     # Create reference frame

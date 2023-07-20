@@ -87,10 +87,12 @@ if __name__ == "__main__":
         row = dict(time_ns=time_ns)
         for j in range(7):
             row[f"panda_joint{j+1}"] = q[j]
-            qsdf.append(row)
+        qsdf.append(row)
         time_ns += int(delta_t * 1e9)
     qsdf = pd.DataFrame(qsdf)
     qsdf.to_excel("/home/ros/dumps/q_generated_100.xlsx", index=False)
+    qsdf.to_csv("/home/ros/dumps/q_generated_100.csv", index=False)
+
 
     print("Number of points in trajectory:", len(qs))
 
