@@ -39,6 +39,20 @@ class BoxTrajectoryPlanner(object):
 
 
 
+"""
+https://frankaemika.github.io/docs/control_parameters.html
+
+Limits in the Cartesian space are as follows:
+
+Velocity: p' max: Translation 1.7 ms-1, Rotation 2.5 rads-1, Elbow 2.1750 rads-1
+Acceleration: p'' max: Translation 13.0 ms-1, Rotation 25.0 rads-2, Elbow 10.0 rads-2
+Jerk: p'''max: Translation 6500.0 ms-3, Rotation 12500.0 rads-3, Elbow 5000.0 rads-3
+
+(Elbow = Joint4)
+
+"""
+
+
 if __name__ == "__main__":
 
     planner = BoxTrajectoryPlanner(0.3, 0.6, -0.5, 0.5, 0.1, 0.6)
