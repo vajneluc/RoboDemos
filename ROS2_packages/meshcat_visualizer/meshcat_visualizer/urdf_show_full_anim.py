@@ -11,52 +11,8 @@ import meshcat.geometry as g
 import meshcat.transformations as tf
 import meshcat_shapes
 import matplotlib.pyplot as plt
+from panda_simple_kinematics import PandaSimpleKinematics, rotate_vec_by_angle, rotate_xy_by_angle
 
-
-def rotate_vec_by_angle(vec, theta):
-    rot = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
-    return np.dot(rot, vec)
-
-def rotate_xy_by_angle(x, y, theta):
-    u = x * math.cos(theta) - y * math.sin(theta)
-    v = y * math.sin(theta) + y * math.cos(theta)
-    return u, v
-
-
-class PandaSimpleKinematics(object):
-    def __init__(self):
-        self.link_a = np.array([0.333, 0])
-        self.link_b = np.array([0.316, 0.0825])
-        self.link_c = np.array([0.384, -0.0825])
-        self.link_d = np.array([-0.107, 0.088]) 
-
-        self.link_b_angle = math.atan2(self.link_b[1], self.link_b[0])
-        self.link_c_angle = math.atan2(self.link_c[1], self.link_c[0])
-        self.link_d_angle = math.atan2(self.link_d[1], self.link_d[0])
-
-    def compute_AB_from_hr(self, h, r):
-        b = np.linalg.norm(self.link_b)
-        c = np.linalg.norm(self.link_c)
-        H = h - self.link_a[0] - self.link_d[0]
-        R = r - self.link_a[1] - self.link_d[1]
-
-        # position pf point P in plane...
-        px = (-H*(H**3 + H * R**2 + H * b**2 - H * c**2 + math.sqrt(-H**4 * R**2 - 2 * H**2 * R**4 + 2* H**2 * R**2 * b**2 + 2 * H**2 * R**2 * c**2 - R**6 + 2 * R**4 * b**2 + 2 * R**4 * c**2 - R**2 * b**4 + 2 * R**2 * b**2 * c**2 - R**2 * c**4))/(H**2 + R**2) + H**2 + R**2 + b**2 - c**2)/(2*R)
-        # y = math.sqrt(b**2 - x**2) 
-        py = (H**3 + H * R**2 + H * b**2 - H*c**2 + math.sqrt(-H**4 * R**2 - 2*H**2 * R**4 + 2* H**2 * R**2 * b**2 + 2 * H**2 * R**2 * c**2 - R**6 + 2 * R**4 * b**2 + 2 * R**4 * c**2 - R**2 * b**4 + 2 * R**2 * b**2 * c**2 - R**2 * c**4))/(2*(H**2 + R**2))
-        py += self.link_a[0]    
-        
-        Ahat = math.asin(px / b) - self.link_b_angle 
-        Dhat = math.pi - math.asin((R - px)/c) - self.link_c_angle
-        Bhat = Ahat - Dhat
-        return Ahat, Bhat, px, py
-    
-    def compute_hr_from_AB(self, A, B):
-        theta1 = A
-        theta2 = A-B
-        h = self.link_a[0] + self.link_b[0] * math.cos(theta1) - self.link_b[1] * math.sin(theta1) + self.link_c[0] * math.cos(theta2) - self.link_c[1] * math.sin(theta2) + self.link_d[0]
-        r = self.link_a[1] + self.link_b[0] * math.sin(theta1) + self.link_b[1] * math.cos(theta1) + self.link_c[0] * math.sin(theta2) + self.link_c[1] * math.cos(theta2) + self.link_d[1]
-        return h, r
 
 
  
@@ -79,7 +35,8 @@ lineC, = ax.plot(x, y)
 lineBC, = ax.plot(x, y)
 lineD, = ax.plot(x, y)
 lineCD, = ax.plot(x, y)
-pointP, =  ax.plot(x, y, marker="*")
+pointP, =  ax.plot(x, y, marker="o")
+pointEE, =  ax.plot(x, y, marker="o")
   
 # setting x-axis label and y-axis label
 plt.xlabel("X-axis")
@@ -158,7 +115,7 @@ for frame, oMf in zip(model.frames, data.oMf):
 
 frame = 0
 current_time = 0
-alpha = 0
+alpha = 0 #0.345
 A = 0.6 # 0 # -0.7853981633974483
 beta = 0
 B = -math.pi/2 # -2.356194490192345
@@ -172,11 +129,12 @@ pc = PandaSimpleKinematics()
 
 while True:
     print("Rendering frame:", frame, "J2:", transforms["panda_joint2"].translation, "J4:", transforms["panda_joint4"].translation, "J6:", transforms["panda_joint6"].translation, "J8:", transforms["panda_joint8"].translation)
-    # angular constraint
-    C = A - B
 
-    q2 = [alpha, A, beta, B, gamma, C, delta]
+    q2 = pc.make_qvec(alpha, A, B)
     apply_joint_config(q2)
+
+    C = q2[5]
+
     pin.forwardKinematics(model, viz.data, q)
     pin.updateFramePlacements(model, viz.data)
 
@@ -196,22 +154,11 @@ while True:
 
     h, r = pc.compute_hr_from_AB(A, B)
 
-    # h = ax + bx * cos(A) - by * sin(A) + cx * cos(A-B) - cy * sin(A-B) + dx
-    # r = ay + bx * sin(A) + by * cos(A) + cx * sin(A-B) + cy * cos(A-B) + dy
+    x, y, z = pc.forward_kinematics(alpha, A, B)
+    alpha_, A_, B_ = pc.inverse_kinematics(x, y, z)
 
-    # H = h - ax - dx = bx * cos(A) - by * sin(A) + cx * cos(A-B) - cy * sin(A-B)
-    # R = r - ay - dy = bx * sin(A) + by * cos(A) + cx * sin(A-B) + cy * cos(A-B)
-
-    # H = bx * cos(A) - by * sin(A) + cx * cos(A-B) - cy * sin(A-B)
-    # R = bx * sin(A) + by * cos(A) + cx * sin(A-B) + cy * cos(A-B)
-
-    # ?? express A, B based on (H, R)
-    # Substitute: D = A-B
-
-    # H = bx * cos(A) - by * sin(A) + cx * cos(D) - cy * sin(D)
-    # R = bx * sin(A) + by * cos(A) + cx * sin(D) + cy * cos(D)
-
-    # Solve simpler problem: find location of point P=[x,y] where |P-O| = b and |P - (R,H)| = c, where b = sqrt(bx^2 + by^2), c=sqrt(cx^2 + cy^2)
+    print(f"Forward kinematics: x={x} y={y} z={z}")
+    print(f"Inverse kinematics: alpha={alpha} A={A} B={B}")
     print(f"A={A} B={B} D={A-B}")
 
     Ahat, Bhat, px, py = pc.compute_AB_from_hr(h, r)
@@ -228,12 +175,8 @@ while True:
     frame += 1
 
     # animate...
-    #alpha += delay * 0.2
-    #delta += delay * 0.2
-
-    # creating new Y values
-    new_y = np.sin(x-0.5*frame)
- 
+    alpha += delay * 0.2
+     
     # updating data values
     lineA.set_ydata([origin[0], pos_A[0]])
     lineA.set_xdata([origin[1], pos_A[1]])
@@ -251,6 +194,8 @@ while True:
     lineCD.set_xdata([pos_C[1], pos_CD[1], pos_D[1]])
     pointP.set_xdata([px])
     pointP.set_ydata([py])
+    pointEE.set_xdata([px])
+    pointEE.set_ydata([py])
  
     # drawing updated values
     figure.canvas.draw()
