@@ -1,0 +1,20 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.5358101923663441 0.5384962887980753 0.650330058283516 1.983807950897173
+  position 166.16520924645323 -700.9629759831938 2862.358903895534
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+CadShape {
+  url [
+    "../Windshield v2.dae"
+  ]
+}
